@@ -75,11 +75,18 @@ export default function Navbar({
   function closeContact() { setShowContact(false); }
 
   function handleSend() {
+    const text = encodeURIComponent(
+      `Hi Fisayo! 👋\n\nName: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}\nLocation: ${form.location}\n\nMessage:\n${form.message}`
+    );
     const subject = encodeURIComponent(`Inquiry from ${form.name || "a visitor"}`);
-    const body = encodeURIComponent(
+    const mailBody = encodeURIComponent(
       `Name: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}\nLocation: ${form.location}\n\nMessage:\n${form.message}`
     );
-    window.open(`mailto:bookfisayoview@gmail.com?subject=${subject}&body=${body}`, "_blank");
+    // Open both channels
+    window.open(`https://wa.me/2348136404224?text=${text}`, "_blank");
+    setTimeout(() => {
+      window.open(`mailto:bookfisayoview@gmail.com?subject=${subject}&body=${mailBody}`, "_blank");
+    }, 300);
     setSent(true);
     setTimeout(() => setShowContact(false), 1500);
   }
@@ -226,7 +233,19 @@ export default function Navbar({
               }}
             />
 
-            {/* Modal */}
+            {/* Centering shell — flex keeps the modal perfectly centred
+                regardless of Framer Motion's own scale/y transforms */}
+            <div
+              style={{
+                position: "fixed",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 201,
+                pointerEvents: "none", // backdrop handles clicks; modal re-enables
+              }}
+            >
             <motion.div
               key="modal"
               initial={{ opacity: 0, scale: 0.97, y: 8 }}
@@ -234,17 +253,14 @@ export default function Navbar({
               exit={{ opacity: 0, scale: 0.97, y: 8 }}
               transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
               style={{
-                position: "fixed",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
                 width: "500px",
+                height: "620px",
                 background: "#202020",
                 borderRadius: "16px",
                 display: "flex",
                 flexDirection: "column",
                 overflow: "hidden",
-                zIndex: 201,
+                pointerEvents: "auto",
               }}
             >
               {/* Header */}
@@ -310,8 +326,8 @@ export default function Navbar({
                   </div>
                 </div>
 
-                {/* Row 3: Message */}
-                <div style={{ flex: 1, padding: "16px 20px", minHeight: "200px", display: "flex" }}>
+                {/* Row 3: Message — fills remaining height */}
+                <div style={{ flex: "1 1 0", padding: "16px 20px", minHeight: "200px", display: "flex" }}>
                   <textarea
                     placeholder="Write your message"
                     value={form.message}
@@ -355,6 +371,7 @@ export default function Navbar({
                 </div>
               </div>
             </motion.div>
+            </div>
           </>
         )}
       </AnimatePresence>
