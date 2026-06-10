@@ -5,6 +5,7 @@ import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { categories, type Category } from "@/lib/projects";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 interface NavbarProps {
   activeCategory: Category;
@@ -29,6 +30,8 @@ export default function Navbar({
 }: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const bp = useBreakpoint();
+  const isMobile = bp === "mobile";
   const [hidden, setHidden] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showContact, setShowContact] = useState(false);
@@ -113,105 +116,115 @@ export default function Navbar({
         animate={hidden ? "hidden" : "visible"}
         variants={{ visible: { y: 0 }, hidden: { y: "-100%" } }}
         transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-        style={{ position: "fixed", top: 0, left: 0, right: 0, height: "64px", background: "#000", zIndex: 50 }}
+        style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0,
+          height: isMobile ? "104px" : "64px",
+          background: "#000",
+          zIndex: 50,
+        }}
       >
-        {/* Logo */}
-        <Link
-          href="/"
-          {...hoverProps("logo")}
-          style={{
-            ...baseTextStyle,
-            position: "absolute",
-            left: "60px",
-            top: "24px",
-            color: "#fff",
-            opacity: itemOpacity("logo"),
-            transition: "opacity 0.2s ease",
-          }}
-        >
-          FISAYOVIEW
-        </Link>
+        {/* ── Desktop / Tablet: single-row layout ── */}
+        {!isMobile && (
+          <>
+            {/* Logo */}
+            <Link
+              href="/"
+              {...hoverProps("logo")}
+              style={{
+                ...baseTextStyle,
+                position: "absolute",
+                left: "60px",
+                top: "24px",
+                color: "#fff",
+                opacity: itemOpacity("logo"),
+                transition: "opacity 0.2s ease",
+              }}
+            >
+              FISAYOVIEW
+            </Link>
 
-        {/* Category filters — centered */}
-        <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", top: "24px", display: "flex", alignItems: "center", gap: "11px" }}>
-          {categories.map((cat) => {
-            const isActive = !allMuted && activeCategory === cat.value;
-            const id = `cat-${cat.value}`;
-            const handleClick = () => {
-              if (pathname !== "/") {
-                sessionStorage.setItem("fisayoview_category", cat.value);
-                sessionStorage.removeItem("fisayoview_scrollY");
-                sessionStorage.removeItem("fisayoview_visibleCount");
-                router.push("/");
-              } else {
-                onCategoryChange(cat.value);
-              }
-            };
-            return (
-              <button
-                key={cat.value}
-                onClick={handleClick}
-                {...hoverProps(id)}
-                style={{
-                  ...baseTextStyle,
-                  color: isActive ? "#fff" : "#808080",
-                  opacity: itemOpacity(id),
-                  transition: "opacity 0.2s ease, color 0.15s ease",
-                }}
-              >
-                {cat.label} ({cat.count})
-              </button>
-            );
-          })}
-        </div>
+            {/* Category filters — centered */}
+            <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", top: "24px", display: "flex", alignItems: "center", gap: "11px" }}>
+              {categories.map((cat) => {
+                const isActive = !allMuted && activeCategory === cat.value;
+                const id = `cat-${cat.value}`;
+                const handleClick = () => {
+                  if (pathname !== "/") {
+                    sessionStorage.setItem("fisayoview_category", cat.value);
+                    sessionStorage.removeItem("fisayoview_scrollY");
+                    sessionStorage.removeItem("fisayoview_visibleCount");
+                    router.push("/");
+                  } else {
+                    onCategoryChange(cat.value);
+                  }
+                };
+                return (
+                  <button
+                    key={cat.value}
+                    onClick={handleClick}
+                    {...hoverProps(id)}
+                    style={{
+                      ...baseTextStyle,
+                      color: isActive ? "#fff" : "#808080",
+                      opacity: itemOpacity(id),
+                      transition: "opacity 0.2s ease, color 0.15s ease",
+                    }}
+                  >
+                    {cat.label} ({cat.count})
+                  </button>
+                );
+              })}
+            </div>
 
-        {/* Nav links — right */}
-        <div style={{ position: "absolute", right: "79px", top: "24px", display: "flex", alignItems: "center", gap: "11px" }}>
-          {/* ABOUT */}
-          <Link
-            href="/about"
-            {...hoverProps("nav-ABOUT")}
-            style={{
-              ...baseTextStyle,
-              color: pathname === "/about" ? "#fff" : "#808080",
-              opacity: itemOpacity("nav-ABOUT"),
-              transition: "opacity 0.2s ease",
-            }}
-          >
-            ABOUT
-          </Link>
+            {/* Nav links — right */}
+            <div style={{ position: "absolute", right: "60px", top: "24px", display: "flex", alignItems: "center", gap: "11px" }}>
+              <Link href="/about" {...hoverProps("nav-ABOUT")} style={{ ...baseTextStyle, color: pathname === "/about" ? "#fff" : "#808080", opacity: itemOpacity("nav-ABOUT"), transition: "opacity 0.2s ease" }}>ABOUT</Link>
+              <button onClick={openContact} {...hoverProps("nav-CONTACT")} style={{ ...baseTextStyle, color: showContact ? "#fff" : "#808080", opacity: itemOpacity("nav-CONTACT"), transition: "opacity 0.2s ease" }}>CONTACT</button>
+              <a href="https://www.instagram.com/fisayoview/" target="_blank" rel="noopener noreferrer" {...hoverProps("nav-INSTAGRAM")} style={{ ...baseTextStyle, color: "#808080", opacity: itemOpacity("nav-INSTAGRAM"), transition: "opacity 0.2s ease" }}>INSTAGRAM</a>
+            </div>
+          </>
+        )}
 
-          {/* CONTACT — opens modal in place, no navigation */}
-          <button
-            onClick={openContact}
-            {...hoverProps("nav-CONTACT")}
-            style={{
-              ...baseTextStyle,
-              color: showContact ? "#fff" : "#808080",
-              opacity: itemOpacity("nav-CONTACT"),
-              transition: "opacity 0.2s ease",
-            }}
-          >
-            CONTACT
-          </button>
+        {/* ── Mobile: two-row layout ── */}
+        {isMobile && (
+          <>
+            {/* Row 1 — logo + links */}
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 24px" }}>
+              <Link href="/" style={{ ...baseTextStyle, color: "#fff", fontSize: "11px" }}>FISAYOVIEW</Link>
+              <div style={{ display: "flex", gap: "16px" }}>
+                <button onClick={openContact} style={{ ...baseTextStyle, color: showContact ? "#fff" : "#808080", fontSize: "11px" }}>CONTACT</button>
+                <a href="https://www.instagram.com/fisayoview/" target="_blank" rel="noopener noreferrer" style={{ ...baseTextStyle, color: "#808080", fontSize: "11px" }}>INSTAGRAM</a>
+              </div>
+            </div>
 
-          {/* INSTAGRAM */}
-          <a
-            href="https://www.instagram.com/fisayoview/"
-            target="_blank"
-            rel="noopener noreferrer"
-            {...hoverProps("nav-INSTAGRAM")}
-            style={{
-              ...baseTextStyle,
-              color: "#808080",
-              opacity: itemOpacity("nav-INSTAGRAM"),
-              transition: "opacity 0.2s ease",
-            }}
-          >
-            INSTAGRAM
-          </a>
-
-        </div>
+            {/* Row 2 — scrollable category strip */}
+            <div style={{ position: "absolute", top: "56px", left: 0, right: 0, height: "48px", display: "flex", alignItems: "center", padding: "0 24px", gap: "16px", overflowX: "auto", borderTop: "1px solid #1a1a1a", scrollbarWidth: "none" }}>
+              {categories.map((cat) => {
+                const isActive = !allMuted && activeCategory === cat.value;
+                const handleClick = () => {
+                  if (pathname !== "/") {
+                    sessionStorage.setItem("fisayoview_category", cat.value);
+                    sessionStorage.removeItem("fisayoview_scrollY");
+                    sessionStorage.removeItem("fisayoview_visibleCount");
+                    router.push("/");
+                  } else {
+                    onCategoryChange(cat.value);
+                  }
+                };
+                return (
+                  <button
+                    key={cat.value}
+                    onClick={handleClick}
+                    style={{ ...baseTextStyle, color: isActive ? "#fff" : "#808080", fontSize: "11px", flexShrink: 0, transition: "color 0.15s ease" }}
+                  >
+                    {cat.label} ({cat.count})
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
       </motion.nav>
 
       {/* ── Contact modal overlay — renders over any page ── */}

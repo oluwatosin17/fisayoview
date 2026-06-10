@@ -16,7 +16,7 @@
 | Supabase project | `jiozqlwcaohekmxhksky` — `https://jiozqlwcaohekmxhksky.supabase.co` |
 | Cloudinary account | Cloud name: `oluwatosin17` |
 | Figma file | `tLYkXZSDDlEiPIkNbkw9n8` |
-| Framework | Next.js 15.5.19, TypeScript, Tailwind v4, Framer Motion |
+| Framework | Next.js 15.5.19, TypeScript, Tailwind v4, Framer Motion, Web Audio API |
 
 ---
 
@@ -181,8 +181,10 @@ Delivery URL format: `https://res.cloudinary.com/oluwatosin17/image/upload/f_aut
 ## 7. Navbar Categories
 
 ```
-ALL PROJECT (40) | WEDDING (10) | BIRTHDAY (9) | GRADUATION (7) | LAW (7)
+ALL PROJECT (45) | BIRTHDAY (19) | WEDDING (9) | GRADUATION (5) | STUDIO (6) | ESSENCE (6)
 ```
+
+> LAW category removed. LIFESTYLE + PORTRAITS merged into **ESSENCE**.
 
 ---
 
@@ -197,7 +199,8 @@ ALL PROJECT (40) | WEDDING (10) | BIRTHDAY (9) | GRADUATION (7) | LAW (7)
 
 **Gallery card** (567px tall, `padding: 100px`, border `1px solid #1a1a1a`):
 - Photo container: 303×367px, `object-fit: contain` (NO cropping)
-- Label: `position: absolute`, `top: 523.5px`, `left: 16px`, 12px Geist, `#808080`, uppercase
+- Label: `position: absolute`, `top: 523.5px`, `left: 16px`, 12px Geist, `#808080` → white on hover, uppercase
+- Hover: image scales 1.035×, label turns white, subtle card bg brightening (rgba 0,0,0,0.03)
 - 3-column grid, last card in row has no right border
 
 **Detail page** (inner page, Figma node 397:10):

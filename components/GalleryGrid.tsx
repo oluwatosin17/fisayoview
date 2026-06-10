@@ -4,6 +4,7 @@ import { useRef, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import type { CollectionSummary } from "@/lib/data";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 interface GalleryGridProps {
   collections: CollectionSummary[];
@@ -17,16 +18,32 @@ function localFilename(url: string): string | null {
   return decodeURIComponent(parts[parts.length - 1]);
 }
 
+/** Per-breakpoint card dimensions */
+const CARD_SIZES = {
+  desktop: { height: 567, padding: 100, imgW: 303, imgH: 367 },
+  tablet:  { height: 460, padding: 60,  imgW: 240, imgH: 290 },
+  mobile:  { height: 380, padding: 32,  imgW: 200, imgH: 240 },
+};
+
+/** Number of columns per breakpoint */
+const COLS = { desktop: 3, tablet: 2, mobile: 1 };
+
 function CollectionCard({
   collection,
-  isLast,
+  col,
+  totalInRow,
   index,
 }: {
   collection: CollectionSummary;
-  isLast: boolean;
+  col: number;
+  totalInRow: number;
   index: number;
 }) {
+  const bp = useBreakpoint();
   const [hovered, setHovered] = useState(false);
+  const { height, padding, imgW, imgH } = CARD_SIZES[bp];
+  const isLastInRow = col === totalInRow - 1;
+
   const filename = localFilename(collection.coverUrl);
   const href = filename
     ? `/projects/${collection.id}?img=${encodeURIComponent(filename)}`
@@ -40,7 +57,7 @@ function CollectionCard({
       transition={{
         duration: 0.6,
         ease: [0.16, 1, 0.3, 1],
-        delay: (index % 3) * 0.08,
+        delay: (index % Math.max(totalInRow, 1)) * 0.08,
       }}
       style={{ flex: "1 0 0", minWidth: 0 }}
     >
@@ -55,39 +72,28 @@ function CollectionCard({
           position: "relative",
           alignItems: "center",
           justifyContent: "center",
-          height: "567px",
-          padding: "100px",
+          height: `${height}px`,
+          padding: `${padding}px`,
           borderTop: "1px solid #1a1a1a",
           borderBottom: "1px solid #1a1a1a",
-          borderRight: isLast ? "none" : "1px solid #1a1a1a",
+          borderRight: isLastInRow ? "none" : "1px solid #1a1a1a",
           textDecoration: "none",
           cursor: "crosshair",
           overflow: "hidden",
+          background: "#000",
         }}
       >
-        {/* Hover overlay — subtle brightening */}
-        <motion.div
-          animate={{ opacity: hovered ? 1 : 0 }}
-          transition={{ duration: 0.35, ease: "easeOut" }}
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "rgba(255,255,255,0.05)",
-            pointerEvents: "none",
-            zIndex: 0,
-          }}
-        />
-
-        {/* Image — scales and lifts on hover */}
+        {/* Image — scales + lifts on hover, no bg change */}
         <motion.div
           animate={{
-            scale: hovered ? 1.07 : 1,
+            scale: hovered ? 1.06 : 1,
             y: hovered ? -4 : 0,
           }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            width: "303px",
-            height: "367px",
+            width: `${imgW}px`,
+            maxWidth: "100%",
+            height: `${imgH}px`,
             flexShrink: 0,
             display: "flex",
             alignItems: "center",
@@ -100,8 +106,8 @@ function CollectionCard({
             src={collection.coverUrl}
             alt={collection.name}
             style={{
-              maxWidth: "303px",
-              maxHeight: "367px",
+              maxWidth: "100%",
+              maxHeight: "100%",
               width: "auto",
               height: "auto",
               display: "block",
@@ -111,12 +117,12 @@ function CollectionCard({
           />
         </motion.div>
 
-        {/* Label */}
+        {/* Label — text white on hover, background unchanged */}
         {collection.labelBgUrl ? (
           <p
             style={{
               position: "absolute",
-              top: "523.5px",
+              bottom: "16px",
               left: "16px",
               fontSize: "12px",
               fontFamily: "var(--font-geist-sans)",
@@ -137,10 +143,10 @@ function CollectionCard({
         ) : (
           <motion.p
             animate={{ color: hovered ? "#ffffff" : "#808080" }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.22 }}
             style={{
               position: "absolute",
-              top: "523.5px",
+              bottom: "16px",
               left: "16px",
               fontSize: "12px",
               fontFamily: "var(--font-geist-sans)",
@@ -163,6 +169,8 @@ export default function GalleryGrid({
   onLoadMore,
   hasMore,
 }: GalleryGridProps) {
+  const bp = useBreakpoint();
+  const cols = COLS[bp];
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [loops, setLoops] = useState(0);
 
@@ -173,11 +181,8 @@ export default function GalleryGrid({
       observerRef.current = new IntersectionObserver(
         (entries) => {
           if (!entries[0].isIntersecting) return;
-          if (hasMore) {
-            onLoadMore();
-          } else {
-            setLoops((n) => n + 1);
-          }
+          if (hasMore) onLoadMore();
+          else setLoops((n) => n + 1);
         },
         { rootMargin: "300px" }
       );
@@ -192,9 +197,11 @@ export default function GalleryGrid({
   ];
 
   const rows: CollectionSummary[][] = [];
-  for (let i = 0; i < display.length; i += 3) {
-    rows.push(display.slice(i, i + 3));
+  for (let i = 0; i < display.length; i += cols) {
+    rows.push(display.slice(i, i + cols));
   }
+
+  const { height: cardH } = CARD_SIZES[bp];
 
   return (
     <div style={{ width: "100%", display: "flex", flexDirection: "column" }}>
@@ -204,22 +211,24 @@ export default function GalleryGrid({
             <CollectionCard
               key={`${rowIndex}-${collection.id}`}
               collection={collection}
-              isLast={colIndex === row.length - 1}
+              col={colIndex}
+              totalInRow={row.length}
               index={colIndex}
             />
           ))}
-          {row.length < 3 &&
-            Array.from({ length: 3 - row.length }).map((_, i) => (
+          {/* Fill empty cells in the last row */}
+          {row.length < cols &&
+            Array.from({ length: cols - row.length }).map((_, i) => (
               <div
                 key={`empty-${i}`}
                 style={{
                   flex: "1 0 0",
                   minWidth: 0,
-                  height: "567px",
+                  height: `${cardH}px`,
                   borderTop: "1px solid #1a1a1a",
                   borderBottom: "1px solid #1a1a1a",
-                  borderRight:
-                    i < 3 - row.length - 1 ? "1px solid #1a1a1a" : "none",
+                  borderRight: i < cols - row.length - 1 ? "1px solid #1a1a1a" : "none",
+                  background: "#000",
                 }}
               />
             ))}

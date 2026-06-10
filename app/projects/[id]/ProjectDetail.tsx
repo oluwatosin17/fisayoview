@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import type { Category } from "@/lib/projects";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 interface ClientProject {
   id: number;
@@ -22,6 +23,12 @@ interface Props {
 const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 export default function ProjectDetail({ project, images, initialIndex }: Props) {
+  const bp = useBreakpoint();
+  const isMobile = bp === "mobile";
+  const isTablet = bp === "tablet";
+  const navHeight = isMobile ? "104px" : "64px";
+  const sidePad = isMobile ? "24px" : isTablet ? "60px" : "120px";
+  const maxImgWidth = isMobile ? "100%" : isTablet ? "420px" : "500px";
   const [activeIndex, setActiveIndex] = useState(initialIndex);
 
   const hasLocal = images.length > 0;
@@ -36,7 +43,7 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5, ease: EASE_OUT }}
-      style={{ background: "#000", minHeight: "100vh", paddingTop: "64px" }}
+      style={{ background: "#000", minHeight: "100vh", paddingTop: navHeight }}
     >
       <Navbar
         activeCategory={"ALL" as Category}
@@ -52,7 +59,7 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          padding: "32px 120px",
+          padding: `32px ${sidePad}`,
           gap: "24px",
         }}
       >
@@ -124,7 +131,7 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
                 transition={{ duration: 0.25, ease: "easeInOut" }}
                 style={{
                   display: "block",
-                  maxWidth: "500px",
+                  maxWidth: maxImgWidth,
                   width: "100%",
                   height: "auto",
                   objectFit: "contain",
@@ -142,7 +149,7 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
                   display: "flex",
                   gap: "6px",
                   flexWrap: "wrap",
-                  maxWidth: "500px",
+                  maxWidth: maxImgWidth,
                 }}
               >
                 {images.map((src, i) => {
@@ -211,7 +218,7 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
               color: "#fff",
               textAlign: "center",
               lineHeight: "normal",
-              width: "455px",
+              width: isMobile ? "100%" : "455px",
               padding: "8px 0",
             }}
           >

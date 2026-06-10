@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import GalleryGrid from "@/components/GalleryGrid";
 import type { CollectionSummary } from "@/lib/data";
 import type { Category } from "@/lib/projects";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 const PAGE_SIZE = 15;
 const SCROLL_KEY = "fisayoview_scrollY";
@@ -17,6 +18,9 @@ interface Props {
 }
 
 export default function HomeClient({ coverImages, collections }: Props) {
+  const bp = useBreakpoint();
+  const navHeight = bp === "mobile" ? "104px" : "64px";
+
   // Always start with defaults so server + client render identically (no hydration mismatch).
   // sessionStorage is read in useEffect (client-only) and applied after first paint.
   const [activeCategory, setActiveCategory] = useState<Category>("ALL");
@@ -60,7 +64,7 @@ export default function HomeClient({ coverImages, collections }: Props) {
   }
 
   return (
-    <div className="bg-black min-h-screen" style={{ paddingTop: "64px" }}>
+    <div className="bg-black min-h-screen" style={{ paddingTop: navHeight }}>
       <Navbar
         activeCategory={activeCategory}
         onCategoryChange={handleCategoryChange}
