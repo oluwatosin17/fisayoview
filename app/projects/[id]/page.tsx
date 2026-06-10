@@ -26,7 +26,7 @@ export default async function ProjectPage({ params, searchParams }: Props) {
   const clientProject = {
     id: detail.id,
     name: detail.name,
-    handle: detail.handle,
+    // handle intentionally omitted — back label always uses name
     caption: detail.caption,
     fallbackImage: detail.coverUrl,
   };

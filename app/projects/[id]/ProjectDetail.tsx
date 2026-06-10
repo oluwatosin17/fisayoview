@@ -9,7 +9,6 @@ import type { Category } from "@/lib/projects";
 interface ClientProject {
   id: number;
   name: string;
-  handle?: string;
   caption?: string;
   fallbackImage?: string;
 }
