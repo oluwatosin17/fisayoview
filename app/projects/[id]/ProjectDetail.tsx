@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import type { Category } from "@/lib/projects";
+import { useSoundContext } from "@/context/SoundContext";
 
 interface ClientProject {
   id: number;
@@ -21,6 +22,7 @@ interface Props {
 
 export default function ProjectDetail({ project, images, initialIndex }: Props) {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const { shutter, whoosh } = useSoundContext();
 
   // Use local images if available, else fall back to the Figma CDN cover
   const hasLocal = images.length > 0;
@@ -32,7 +34,12 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
   const backLabel = project.name.toLowerCase().replace(/\s+/g, ".");
 
   return (
-    <div style={{ background: "#000", minHeight: "100vh", paddingTop: "64px" }}>
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+      style={{ background: "#000", minHeight: "100vh", paddingTop: "64px" }}
+    >
       <Navbar
         activeCategory={"ALL" as Category}
         onCategoryChange={() => {}}
@@ -53,6 +60,7 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
           {/* Back link */}
           <Link
             href="/"
+            onClick={whoosh}
             style={{
               display: "flex",
               alignItems: "center",
@@ -128,7 +136,7 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
                   return (
                     <button
                       key={i}
-                      onClick={() => setActiveIndex(i)}
+                      onClick={() => { shutter(); setActiveIndex(i); }}
                       aria-label={`View photo ${i + 1}`}
                       style={{
                         position: "relative",
@@ -189,6 +197,6 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
           </p>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

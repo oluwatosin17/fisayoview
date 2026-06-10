@@ -5,6 +5,7 @@ import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { categories, type Category } from "@/lib/projects";
+import { useSoundContext } from "@/context/SoundContext";
 
 interface NavbarProps {
   activeCategory: Category;
@@ -29,6 +30,7 @@ export default function Navbar({
 }: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const { tick, whoosh, soundOn, toggleSound } = useSoundContext();
   const [hidden, setHidden] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showContact, setShowContact] = useState(false);
@@ -47,8 +49,8 @@ export default function Navbar({
     return hoveredId === id ? 1 : 0.3;
   }
 
-  const hoverProps = (id: string) => ({
-    onMouseEnter: () => setHoveredId(id),
+  const hoverProps = (id: string, withTick = false) => ({
+    onMouseEnter: () => { setHoveredId(id); if (withTick) tick(); },
     onMouseLeave: () => setHoveredId(null),
     style: { opacity: itemOpacity(id), transition: "opacity 0.2s ease" } as React.CSSProperties,
   });
@@ -138,7 +140,9 @@ export default function Navbar({
             const isActive = !allMuted && activeCategory === cat.value;
             const id = `cat-${cat.value}`;
             const handleClick = () => {
+              tick();
               if (pathname !== "/") {
+                whoosh();
                 sessionStorage.setItem("fisayoview_category", cat.value);
                 sessionStorage.removeItem("fisayoview_scrollY");
                 sessionStorage.removeItem("fisayoview_visibleCount");
@@ -170,7 +174,7 @@ export default function Navbar({
           {/* ABOUT */}
           <Link
             href="/about"
-            {...hoverProps("nav-ABOUT")}
+            {...hoverProps("nav-ABOUT", true)}
             style={{
               ...baseTextStyle,
               color: pathname === "/about" ? "#fff" : "#808080",
@@ -183,7 +187,7 @@ export default function Navbar({
 
           {/* CONTACT — opens modal in place, no navigation */}
           <button
-            onClick={openContact}
+            onClick={() => { tick(); openContact(); }}
             {...hoverProps("nav-CONTACT")}
             style={{
               ...baseTextStyle,
@@ -200,7 +204,7 @@ export default function Navbar({
             href="https://www.instagram.com/fisayoview/"
             target="_blank"
             rel="noopener noreferrer"
-            {...hoverProps("nav-INSTAGRAM")}
+            {...hoverProps("nav-INSTAGRAM", true)}
             style={{
               ...baseTextStyle,
               color: "#808080",
@@ -210,6 +214,38 @@ export default function Navbar({
           >
             INSTAGRAM
           </a>
+
+          {/* Sound toggle — subtle speaker icon */}
+          <button
+            onClick={toggleSound}
+            title={soundOn ? "Mute sounds" : "Enable sounds"}
+            style={{
+              background: "none",
+              border: "none",
+              padding: 0,
+              cursor: "pointer",
+              opacity: 0.4,
+              display: "flex",
+              alignItems: "center",
+              transition: "opacity 0.2s ease",
+              marginLeft: "4px",
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.8"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.4"; }}
+          >
+            {soundOn ? (
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M1 4.5V7.5H3L6 10V2L3 4.5H1Z" fill="#808080"/>
+                <path d="M8 4.5C8.6 5 9 5.5 9 6C9 6.5 8.6 7 8 7.5" stroke="#808080" strokeWidth="1" strokeLinecap="round"/>
+                <path d="M9.5 3C10.8 3.9 11.5 4.9 11.5 6C11.5 7.1 10.8 8.1 9.5 9" stroke="#808080" strokeWidth="1" strokeLinecap="round"/>
+              </svg>
+            ) : (
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M1 4.5V7.5H3L6 10V2L3 4.5H1Z" fill="#555"/>
+                <path d="M8 4.5L11 7.5M11 4.5L8 7.5" stroke="#555" strokeWidth="1" strokeLinecap="round"/>
+              </svg>
+            )}
+          </button>
         </div>
       </motion.nav>
 

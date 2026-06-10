@@ -4,6 +4,7 @@ import { useRef, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import type { CollectionSummary } from "@/lib/data";
+import { useSoundContext } from "@/context/SoundContext";
 
 interface GalleryGridProps {
   collections: CollectionSummary[];
@@ -21,18 +22,34 @@ function localFilename(url: string): string | null {
 function CollectionCard({
   collection,
   isLast,
+  index,
 }: {
   collection: CollectionSummary;
   isLast: boolean;
+  index: number;
 }) {
+  const { shutter, tick } = useSoundContext();
   const filename = localFilename(collection.coverUrl);
   const href = filename
     ? `/projects/${collection.id}?img=${encodeURIComponent(filename)}`
     : `/projects/${collection.id}`;
 
   return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{
+        duration: 0.55,
+        ease: [0.16, 1, 0.3, 1],
+        delay: (index % 3) * 0.07,  // stagger within each row
+      }}
+      style={{ flex: "1 0 0", minWidth: 0 }}
+    >
     <Link
       href={href}
+      onMouseEnter={tick}
+      onClick={shutter}
       style={{
         display: "flex",
         flex: "1 0 0",
@@ -50,11 +67,7 @@ function CollectionCard({
         overflow: "hidden",
       }}
     >
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: "80px" }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+      <div
         style={{
           width: "303px",
           height: "367px",
@@ -78,7 +91,7 @@ function CollectionCard({
           }}
           loading="lazy"
         />
-      </motion.div>
+      </div>
 
       {/* Label */}
       {collection.labelBgUrl ? (
@@ -120,6 +133,7 @@ function CollectionCard({
         </p>
       )}
     </Link>
+    </motion.div>
   );
 }
 
@@ -172,6 +186,7 @@ export default function GalleryGrid({
               key={`${rowIndex}-${collection.id}`}
               collection={collection}
               isLast={colIndex === row.length - 1}
+              index={colIndex}
             />
           ))}
           {row.length < 3 &&

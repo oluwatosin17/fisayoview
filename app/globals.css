@@ -13,9 +13,29 @@
   padding: 0;
 }
 
+/* ── Motion tokens ─────────────────────────────────────────── */
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-io:  cubic-bezier(0.76, 0, 0.24, 1);
+
+  --dur-fast:   150ms;
+  --dur-normal: 280ms;
+  --dur-slow:   480ms;
+}
+
 html,
 body {
   background: #000;
   color: #fff;
   font-family: var(--font-geist-sans), sans-serif;
+}
+
+/* ── Reduced-motion: instant state changes instead of full removal ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
