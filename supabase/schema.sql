@@ -34,6 +34,9 @@ CREATE TABLE IF NOT EXISTS images (
   created_at            TIMESTAMPTZ   NOT NULL DEFAULT now()
 );
 
+-- Unique constraints
+ALTER TABLE images ADD CONSTRAINT IF NOT EXISTS images_cloudinary_public_id_unique UNIQUE (cloudinary_public_id);
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_images_collection ON images(collection_id, sort_order);
 CREATE INDEX IF NOT EXISTS idx_collections_order  ON collections(display_order);
