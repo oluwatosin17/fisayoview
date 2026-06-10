@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { categories, type Category } from "@/lib/projects";
 
@@ -24,6 +24,7 @@ export default function Navbar({
   allMuted = false,
 }: NavbarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [hidden, setHidden] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const { scrollY } = useScroll();
@@ -118,10 +119,22 @@ export default function Navbar({
         {categories.map((cat) => {
           const isActive = !allMuted && activeCategory === cat.value;
           const id = `cat-${cat.value}`;
+          const handleClick = () => {
+            if (pathname !== "/") {
+              // On non-home pages: save chosen category and navigate home
+              sessionStorage.setItem("fisayoview_category", cat.value);
+              // Clear scroll so home page starts at top for this new filter
+              sessionStorage.removeItem("fisayoview_scrollY");
+              sessionStorage.removeItem("fisayoview_visibleCount");
+              router.push("/");
+            } else {
+              onCategoryChange(cat.value);
+            }
+          };
           return (
             <button
               key={cat.value}
-              onClick={() => onCategoryChange(cat.value)}
+              onClick={handleClick}
               {...hoverProps(id)}
               style={{
                 ...baseTextStyle,

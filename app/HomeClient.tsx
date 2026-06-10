@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import GalleryGrid from "@/components/GalleryGrid";
 import type { CollectionSummary } from "@/lib/data";
@@ -17,17 +17,18 @@ interface Props {
 }
 
 export default function HomeClient({ coverImages, collections }: Props) {
-  const [activeCategory, setActiveCategory] = useState<Category>(() => {
-    if (typeof window === "undefined") return "ALL";
-    return (sessionStorage.getItem(CAT_KEY) as Category) ?? "ALL";
-  });
-  const [visibleCount, setVisibleCount] = useState(() => {
-    if (typeof window === "undefined") return PAGE_SIZE;
-    const saved = sessionStorage.getItem(COUNT_KEY);
-    return saved ? Math.max(PAGE_SIZE, parseInt(saved, 10)) : PAGE_SIZE;
-  });
-  const restoredRef = useRef(false);
+  // Always start with defaults so server + client render identically (no hydration mismatch).
+  // sessionStorage is read in useEffect (client-only) and applied after first paint.
+  const [activeCategory, setActiveCategory] = useState<Category>("ALL");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
+  // Restore persisted category + visibleCount from sessionStorage after hydration
+  useEffect(() => {
+    const savedCat = sessionStorage.getItem(CAT_KEY) as Category | null;
+    const savedCount = sessionStorage.getItem(COUNT_KEY);
+    if (savedCat) setActiveCategory(savedCat);
+    if (savedCount) setVisibleCount(Math.max(PAGE_SIZE, parseInt(savedCount, 10)));
+  }, []); // runs once on mount, client-only
   const filtered = useMemo(() => {
     if (activeCategory === "ALL") return collections;
     return collections.filter((c) => c.category === (activeCategory as string));
@@ -36,51 +37,8 @@ export default function HomeClient({ coverImages, collections }: Props) {
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
 
-  // Restore scroll position when navigating back.
-  // Uses a retry loop because the page needs height before it can scroll.
-  useEffect(() => {
-    if (restoredRef.current) return;
-    restoredRef.current = true;
-
-    const savedY = sessionStorage.getItem(SCROLL_KEY);
-    if (!savedY) return;
-
-    const targetY = parseInt(savedY, 10);
-    if (targetY <= 0) {
-      sessionStorage.removeItem(SCROLL_KEY);
-      return;
-    }
-
-    let attempts = 0;
-    const MAX_ATTEMPTS = 60; // ~1s total
-
-    function tryScroll() {
-      if (attempts >= MAX_ATTEMPTS) {
-        sessionStorage.removeItem(SCROLL_KEY);
-        return;
-      }
-      attempts++;
-
-      const pageHeight = document.documentElement.scrollHeight;
-      if (pageHeight > targetY + window.innerHeight) {
-        window.scrollTo({ top: targetY, behavior: "instant" });
-        // Verify we landed correctly (content can shift during image load)
-        requestAnimationFrame(() => {
-          if (Math.abs(window.scrollY - targetY) > 20) {
-            window.scrollTo({ top: targetY, behavior: "instant" });
-          }
-          // Only clear the key after a successful scroll
-          sessionStorage.removeItem(SCROLL_KEY);
-        });
-      } else {
-        requestAnimationFrame(tryScroll);
-      }
-    }
-
-    requestAnimationFrame(tryScroll);
-  }, []); // run once on mount
-
-  // Persist scroll position, visibleCount, and category on every scroll
+  // Persist scroll position + visibleCount on every scroll
+  // (Scroll RESTORATION is handled by NavigationRestorer in the root layout)
   useEffect(() => {
     const save = () => {
       sessionStorage.setItem(SCROLL_KEY, String(Math.round(window.scrollY)));
@@ -90,17 +48,14 @@ export default function HomeClient({ coverImages, collections }: Props) {
     return () => window.removeEventListener("scroll", save);
   }, [visibleCount]);
 
-  // Persist category whenever it changes
-  useEffect(() => {
-    sessionStorage.setItem(CAT_KEY, activeCategory);
-  }, [activeCategory]);
-
+  // CAT_KEY is saved explicitly in handleCategoryChange (not via a reactive effect)
+  // so the initial mount with activeCategory="ALL" never overwrites a saved WEDDING/BIRTHDAY etc.
   function handleCategoryChange(cat: Category) {
     setActiveCategory(cat);
     setVisibleCount(PAGE_SIZE);
+    sessionStorage.setItem(CAT_KEY, cat);   // ← write only on explicit user action
     sessionStorage.removeItem(SCROLL_KEY);
     sessionStorage.removeItem(COUNT_KEY);
-    // Keep CAT_KEY — it's updated via the useEffect above
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 
