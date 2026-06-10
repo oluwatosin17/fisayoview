@@ -55,14 +55,14 @@ export default function Preloader({ onComplete }: Props) {
         pointerEvents: exiting ? "none" : "all",
       }}
     >
-      {/* Counter — bottom right, GS Productions style */}
+      {/* Counter — bottom right, responsive position */}
       <span
         style={{
           position: "fixed",
-          bottom: "52px",
-          right: "56px",
+          bottom: "clamp(24px, 4vh, 52px)",
+          right: "clamp(16px, 4vw, 56px)",
           fontFamily: "var(--font-geist-sans)",
-          fontSize: "13px",
+          fontSize: "clamp(11px, 2.5vw, 13px)",
           fontWeight: 300,
           color: "#fbfbfb",
           letterSpacing: "0.04em",

@@ -18,11 +18,11 @@ function localFilename(url: string): string | null {
   return decodeURIComponent(parts[parts.length - 1]);
 }
 
-/** Per-breakpoint card dimensions */
+/** Per-breakpoint card dimensions — mobile matches Figma 541:952: px-100 py-60 */
 const CARD_SIZES = {
-  desktop: { height: 567, padding: 100, imgW: 303, imgH: 367 },
-  tablet:  { height: 460, padding: 60,  imgW: 240, imgH: 290 },
-  mobile:  { height: 567, padding: 100, imgW: 303, imgH: 367 }, // matches Figma: same card height as desktop, 1 column
+  desktop: { height: 567, paddingX: 100, paddingY: 100, imgW: 303, imgH: 367 },
+  tablet:  { height: 460, paddingX: 60,  paddingY: 60,  imgW: 240, imgH: 290 },
+  mobile:  { height: 487, paddingX: 100, paddingY: 60,  imgW: 303, imgH: 367 },
 };
 
 /** Number of columns per breakpoint */
@@ -41,7 +41,7 @@ function CollectionCard({
 }) {
   const bp = useBreakpoint();
   const [hovered, setHovered] = useState(false);
-  const { height, padding, imgW, imgH } = CARD_SIZES[bp];
+  const { height, paddingX, paddingY, imgW, imgH } = CARD_SIZES[bp];
   const isLastInRow = col === totalInRow - 1;
 
   const filename = localFilename(collection.coverUrl);
@@ -73,7 +73,7 @@ function CollectionCard({
           alignItems: "center",
           justifyContent: "center",
           height: `${height}px`,
-          padding: `${padding}px`,
+          padding: `${paddingY}px ${paddingX}px`,
           borderTop: "1px solid #1a1a1a",
           borderBottom: "1px solid #1a1a1a",
           borderRight: isLastInRow ? "none" : "1px solid #1a1a1a",
@@ -201,7 +201,7 @@ export default function GalleryGrid({
     rows.push(display.slice(i, i + cols));
   }
 
-  const { height: cardH } = CARD_SIZES[bp];
+  const { height: cardH } = CARD_SIZES[bp]; // used for empty-cell height
 
   return (
     <div style={{ width: "100%", display: "flex", flexDirection: "column" }}>

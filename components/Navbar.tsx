@@ -193,33 +193,33 @@ export default function Navbar({
         {/* ── Mobile: matches Figma node 541:952 ── */}
         {isMobile && (
           <>
-            {/* Top bar — logo left, links right, 45px height */}
+            {/* Top bar — logo left, links right, 45px height — font: 11px per Figma 541:952 */}
             <div style={{
               position: "absolute", top: 0, left: 0, right: 0, height: "45px",
               display: "flex", alignItems: "center", justifyContent: "space-between",
               padding: "0 16px",
               borderBottom: "1px solid #1a1a1a",
             }}>
-              <Link href="/" style={{ ...baseTextStyle, fontSize: "10px", color: "#fff" }}>FISAYOVIEW</Link>
+              <Link href="/" style={{ ...baseTextStyle, fontSize: "11px", color: "#fff" }}>FISAYOVIEW</Link>
               <div style={{ display: "flex", gap: "11px", alignItems: "center" }}>
-                <Link href="/about" style={{ ...baseTextStyle, fontSize: "10px", color: pathname === "/about" ? "#fff" : "#808080" }}>ABOUT</Link>
-                <button onClick={openContact} style={{ ...baseTextStyle, fontSize: "10px", color: showContact ? "#fff" : "#808080" }}>CONTACT</button>
-                <a href="https://www.instagram.com/fisayoview/" target="_blank" rel="noopener noreferrer" style={{ ...baseTextStyle, fontSize: "10px", color: "#808080" }}>INSTAGRAM</a>
+                <Link href="/about" style={{ ...baseTextStyle, fontSize: "11px", color: pathname === "/about" ? "#fff" : "#808080" }}>ABOUT</Link>
+                <button onClick={openContact} style={{ ...baseTextStyle, fontSize: "11px", color: showContact ? "#fff" : "#808080" }}>CONTACT</button>
+                <a href="https://www.instagram.com/fisayoview/" target="_blank" rel="noopener noreferrer" style={{ ...baseTextStyle, fontSize: "11px", color: "#808080" }}>INSTAGRAM</a>
               </div>
             </div>
 
-            {/* Category strip — at y:64, gap:20px, left-padding:16px, horizontal scroll */}
+            {/* Category strip — y:64, gap:22px, padding-left:16px — font: 11px, gap: 22px per Figma */}
             <div style={{
               position: "absolute", top: "64px", left: 0, right: 0,
               display: "flex", alignItems: "center",
-              paddingLeft: "16px", gap: "20px",
+              paddingLeft: "16px", gap: "22px",
               overflowX: "auto", scrollbarWidth: "none",
             }}>
               {categories.map((cat) => {
                 const isActive = !allMuted && activeCategory === cat.value;
                 return (
                   <button key={cat.value} onClick={() => handleCatClick(cat.value)}
-                    style={{ ...baseTextStyle, fontSize: "12px", color: isActive ? "#fff" : "#808080", flexShrink: 0, transition: "color 0.15s ease" }}>
+                    style={{ ...baseTextStyle, fontSize: "11px", color: isActive ? "#fff" : "#808080", flexShrink: 0, transition: "color 0.15s ease" }}>
                     {cat.label} ({cat.count})
                   </button>
                 );
