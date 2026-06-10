@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import type { Category } from "@/lib/projects";
-import { useSoundContext } from "@/context/SoundContext";
 
 interface ClientProject {
   id: number;
@@ -20,24 +19,23 @@ interface Props {
   initialIndex: number;
 }
 
+const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
 export default function ProjectDetail({ project, images, initialIndex }: Props) {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
-  const { shutter, whoosh } = useSoundContext();
 
-  // Use local images if available, else fall back to the Figma CDN cover
   const hasLocal = images.length > 0;
   const mainImage = hasLocal
     ? (images[activeIndex] ?? images[0])
     : project.fallbackImage ?? "";
 
-  // Always show the project name as back label (not the Instagram handle)
   const backLabel = project.name.toLowerCase().replace(/\s+/g, ".");
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: EASE_OUT }}
       style={{ background: "#000", minHeight: "100vh", paddingTop: "64px" }}
     >
       <Navbar
@@ -46,7 +44,10 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
         allMuted
       />
 
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: EASE_OUT, delay: 0.1 }}
         style={{
           display: "flex",
           flexDirection: "column",
@@ -57,40 +58,50 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
 
-          {/* Back link */}
-          <Link
-            href="/"
-            onClick={whoosh}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              textDecoration: "none",
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M10 12L6 8L10 4"
-                stroke="#808080"
-                strokeWidth="1.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span
+          {/* Back link — arrow slides left on hover */}
+          <motion.div whileHover="hover" style={{ display: "inline-flex" }}>
+            <Link
+              href="/"
               style={{
-                fontSize: "12px",
-                fontFamily: "var(--font-geist-sans)",
-                color: "#808080",
-                textTransform: "uppercase",
-                letterSpacing: 0,
-                lineHeight: "normal",
-                whiteSpace: "nowrap",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                textDecoration: "none",
               }}
             >
-              {backLabel}
-            </span>
-          </Link>
+              <motion.svg
+                variants={{ hover: { x: -3 } }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+              >
+                <path
+                  d="M10 12L6 8L10 4"
+                  stroke="#808080"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </motion.svg>
+              <motion.span
+                variants={{ hover: { color: "#fff" } }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  fontSize: "12px",
+                  fontFamily: "var(--font-geist-sans)",
+                  color: "#808080",
+                  textTransform: "uppercase",
+                  letterSpacing: 0,
+                  lineHeight: "normal",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {backLabel}
+              </motion.span>
+            </Link>
+          </motion.div>
 
           {/* Photo viewer + thumbnails */}
           <div
@@ -101,16 +112,16 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
               alignItems: "center",
             }}
           >
-            {/* Main image — natural aspect ratio, NO cropping */}
+            {/* Main image — cross-fade on change */}
             <AnimatePresence mode="wait">
               <motion.img
                 key={mainImage}
                 src={mainImage}
                 alt={project.name}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
                 style={{
                   display: "block",
                   maxWidth: "500px",
@@ -121,9 +132,12 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
               />
             </AnimatePresence>
 
-            {/* Thumbnail strip — only when local images available */}
+            {/* Thumbnail strip */}
             {hasLocal && images.length > 1 && (
-              <div
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: EASE_OUT, delay: 0.2 }}
                 style={{
                   display: "flex",
                   gap: "6px",
@@ -134,9 +148,12 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
                 {images.map((src, i) => {
                   const isActive = i === activeIndex;
                   return (
-                    <button
+                    <motion.button
                       key={i}
-                      onClick={() => { shutter(); setActiveIndex(i); }}
+                      onClick={() => setActiveIndex(i)}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.92 }}
+                      transition={{ duration: 0.18, ease: EASE_OUT }}
                       aria-label={`View photo ${i + 1}`}
                       style={{
                         position: "relative",
@@ -163,26 +180,31 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
                           borderRadius: "1.6px",
                         }}
                       />
-                      {!isActive && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            inset: 0,
-                            background: "rgba(255,255,255,0.5)",
-                            borderRadius: "1.6px",
-                          }}
-                        />
-                      )}
-                    </button>
+                      {/* Inactive dim overlay — animates in/out */}
+                      <motion.div
+                        animate={{ opacity: isActive ? 0 : 1 }}
+                        transition={{ duration: 0.2 }}
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          background: "rgba(255,255,255,0.5)",
+                          borderRadius: "1.6px",
+                          pointerEvents: "none",
+                        }}
+                      />
+                    </motion.button>
                   );
                 })}
-              </div>
+              </motion.div>
             )}
           </div>
         </div>
 
         {project.caption && (
-          <p
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.35 }}
             style={{
               fontSize: "12px",
               fontFamily: "var(--font-geist-sans)",
@@ -194,9 +216,9 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
             }}
           >
             {project.caption}
-          </p>
+          </motion.p>
         )}
-      </div>
+      </motion.div>
     </motion.div>
   );
 }

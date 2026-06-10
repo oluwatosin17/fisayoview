@@ -4,7 +4,6 @@ import { useRef, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import type { CollectionSummary } from "@/lib/data";
-import { useSoundContext } from "@/context/SoundContext";
 
 interface GalleryGridProps {
   collections: CollectionSummary[];
@@ -12,7 +11,6 @@ interface GalleryGridProps {
   hasMore: boolean;
 }
 
-// Extract filename from /api/serve/ URL; returns null for Cloudinary or other URLs
 function localFilename(url: string): string | null {
   if (!url.startsWith("/api/serve/")) return null;
   const parts = url.split("/");
@@ -28,7 +26,7 @@ function CollectionCard({
   isLast: boolean;
   index: number;
 }) {
-  const { shutter, tick } = useSoundContext();
+  const [hovered, setHovered] = useState(false);
   const filename = localFilename(collection.coverUrl);
   const href = filename
     ? `/projects/${collection.id}?img=${encodeURIComponent(filename)}`
@@ -36,103 +34,126 @@ function CollectionCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{
-        duration: 0.55,
+        duration: 0.6,
         ease: [0.16, 1, 0.3, 1],
-        delay: (index % 3) * 0.07,  // stagger within each row
+        delay: (index % 3) * 0.08,
       }}
       style={{ flex: "1 0 0", minWidth: 0 }}
     >
-    <Link
-      href={href}
-      onMouseEnter={tick}
-      onClick={shutter}
-      style={{
-        display: "flex",
-        flex: "1 0 0",
-        minWidth: 0,
-        position: "relative",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "567px",
-        padding: "100px",
-        borderTop: "1px solid #1a1a1a",
-        borderBottom: "1px solid #1a1a1a",
-        borderRight: isLast ? "none" : "1px solid #1a1a1a",
-        textDecoration: "none",
-        cursor: "pointer",
-        overflow: "hidden",
-      }}
-    >
-      <div
+      <Link
+        href={href}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         style={{
-          width: "303px",
-          height: "367px",
-          flexShrink: 0,
           display: "flex",
+          flex: "1 0 0",
+          minWidth: 0,
+          position: "relative",
           alignItems: "center",
           justifyContent: "center",
+          height: "567px",
+          padding: "100px",
+          borderTop: "1px solid #1a1a1a",
+          borderBottom: "1px solid #1a1a1a",
+          borderRight: isLast ? "none" : "1px solid #1a1a1a",
+          textDecoration: "none",
+          cursor: "crosshair",
+          overflow: "hidden",
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={collection.coverUrl}
-          alt={collection.name}
+        {/* Hover overlay — subtle brightening */}
+        <motion.div
+          animate={{ opacity: hovered ? 1 : 0 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
           style={{
-            maxWidth: "303px",
-            maxHeight: "367px",
-            width: "auto",
-            height: "auto",
-            display: "block",
-            objectFit: "contain",
+            position: "absolute",
+            inset: 0,
+            background: "rgba(255,255,255,0.05)",
+            pointerEvents: "none",
+            zIndex: 0,
           }}
-          loading="lazy"
         />
-      </div>
 
-      {/* Label */}
-      {collection.labelBgUrl ? (
-        <p
+        {/* Image — scales and lifts on hover */}
+        <motion.div
+          animate={{
+            scale: hovered ? 1.07 : 1,
+            y: hovered ? -4 : 0,
+          }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            position: "absolute",
-            top: "523.5px",
-            left: "16px",
-            fontSize: "12px",
-            fontFamily: "var(--font-geist-sans)",
-            lineHeight: "normal",
-            whiteSpace: "nowrap",
-            textTransform: "uppercase",
-            backgroundImage: `url("${collection.labelBgUrl}")`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
+            width: "303px",
+            height: "367px",
+            flexShrink: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1,
           }}
         >
-          {collection.name}
-        </p>
-      ) : (
-        <p
-          style={{
-            position: "absolute",
-            top: "523.5px",
-            left: "16px",
-            fontSize: "12px",
-            fontFamily: "var(--font-geist-sans)",
-            lineHeight: "normal",
-            color: "#808080",
-            whiteSpace: "nowrap",
-            textTransform: "uppercase",
-          }}
-        >
-          {collection.name}
-        </p>
-      )}
-    </Link>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={collection.coverUrl}
+            alt={collection.name}
+            style={{
+              maxWidth: "303px",
+              maxHeight: "367px",
+              width: "auto",
+              height: "auto",
+              display: "block",
+              objectFit: "contain",
+            }}
+            loading="lazy"
+          />
+        </motion.div>
+
+        {/* Label */}
+        {collection.labelBgUrl ? (
+          <p
+            style={{
+              position: "absolute",
+              top: "523.5px",
+              left: "16px",
+              fontSize: "12px",
+              fontFamily: "var(--font-geist-sans)",
+              lineHeight: "normal",
+              whiteSpace: "nowrap",
+              textTransform: "uppercase",
+              backgroundImage: `url("${collection.labelBgUrl}")`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+              color: "transparent",
+              zIndex: 2,
+            }}
+          >
+            {collection.name}
+          </p>
+        ) : (
+          <motion.p
+            animate={{ color: hovered ? "#ffffff" : "#808080" }}
+            transition={{ duration: 0.25 }}
+            style={{
+              position: "absolute",
+              top: "523.5px",
+              left: "16px",
+              fontSize: "12px",
+              fontFamily: "var(--font-geist-sans)",
+              lineHeight: "normal",
+              whiteSpace: "nowrap",
+              textTransform: "uppercase",
+              zIndex: 2,
+            }}
+          >
+            {collection.name}
+          </motion.p>
+        )}
+      </Link>
     </motion.div>
   );
 }
@@ -155,7 +176,6 @@ export default function GalleryGrid({
           if (hasMore) {
             onLoadMore();
           } else {
-            // All loaded — loop gallery seamlessly
             setLoops((n) => n + 1);
           }
         },
@@ -166,7 +186,6 @@ export default function GalleryGrid({
     [hasMore, onLoadMore]
   );
 
-  // Expand with loop repeats for endless scroll
   const display = [
     ...collections,
     ...Array.from({ length: loops }).flatMap(() => collections),
@@ -206,7 +225,6 @@ export default function GalleryGrid({
             ))}
         </div>
       ))}
-      {/* Always-present sentinel for infinite scroll */}
       <div ref={sentinelRef} style={{ height: "1px" }} />
     </div>
   );

@@ -1,7 +1,6 @@
 "use client";
-
-import { createContext, useContext, useState, useCallback } from "react";
-import { useSound } from "@/hooks/useSound";
+// Sound removed — provider is a passthrough, all functions are no-ops
+import { createContext, useContext } from "react";
 
 interface SoundCtx {
   shutter: () => void;
@@ -11,31 +10,11 @@ interface SoundCtx {
   toggleSound: () => void;
 }
 
-const Ctx = createContext<SoundCtx>({
-  shutter: () => {},
-  tick: () => {},
-  whoosh: () => {},
-  soundOn: true,
-  toggleSound: () => {},
-});
+const noop = () => {};
+const Ctx = createContext<SoundCtx>({ shutter: noop, tick: noop, whoosh: noop, soundOn: false, toggleSound: noop });
 
 export function SoundProvider({ children }: { children: React.ReactNode }) {
-  const [soundOn, setSoundOn] = useState(true);
-  const { shutter, tick, whoosh, toggle } = useSound();
-
-  const toggleSound = useCallback(() => {
-    setSoundOn((prev) => {
-      const next = !prev;
-      toggle(next);
-      return next;
-    });
-  }, [toggle]);
-
-  return (
-    <Ctx.Provider value={{ shutter, tick, whoosh, soundOn, toggleSound }}>
-      {children}
-    </Ctx.Provider>
-  );
+  return <Ctx.Provider value={{ shutter: noop, tick: noop, whoosh: noop, soundOn: false, toggleSound: noop }}>{children}</Ctx.Provider>;
 }
 
 export const useSoundContext = () => useContext(Ctx);
