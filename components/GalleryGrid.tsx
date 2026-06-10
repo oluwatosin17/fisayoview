@@ -135,15 +135,31 @@ function MobileCell({ collection, index }: { collection: CollectionSummary; inde
         <motion.div
           animate={{ opacity: pressed ? 0.7 : 1 }}
           transition={{ duration: 0.1 }}
-          style={{ position: "relative", width: "100%", paddingBottom: "100%", overflow: "hidden", background: "#111" }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={collection.coverUrl}
-            alt={collection.name}
-            loading="lazy"
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-          />
+          {/* Square image */}
+          <div style={{ position: "relative", width: "100%", paddingBottom: "100%", overflow: "hidden", background: "#111" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={collection.coverUrl}
+              alt={collection.name}
+              loading="lazy"
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+          </div>
+          {/* Collection name */}
+          <p style={{
+            fontSize: "11px",
+            fontFamily: "var(--font-geist-sans)",
+            color: "#808080",
+            textTransform: "uppercase",
+            lineHeight: "normal",
+            padding: "8px 4px 12px",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}>
+            {collection.name}
+          </p>
         </motion.div>
       </Link>
     </motion.div>
