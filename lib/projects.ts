@@ -4,8 +4,7 @@ export type Category =
   | "BIRTHDAY"
   | "GRADUATION"
   | "STUDIO"
-  | "PORTRAITS"
-  | "LIFESTYLE";
+  | "ESSENCE";
 
 export interface Project {
   id: number;
@@ -35,8 +34,7 @@ export const categories: { label: string; value: Category; count: number }[] =
     { label: "WEDDING",      value: "WEDDING",    count: 9  },
     { label: "GRADUATION",   value: "GRADUATION", count: 5  },
     { label: "STUDIO",       value: "STUDIO",     count: 6  },
-    { label: "PORTRAITS",    value: "PORTRAITS",  count: 5  },
-    { label: "LIFESTYLE",    value: "LIFESTYLE",  count: 1  },
+    { label: "ESSENCE",      value: "ESSENCE",    count: 6  },
   ];
 
 export const projects: Project[] = [
@@ -75,7 +73,7 @@ export const projects: Project[] = [
     folderName: "GABRIEL OGHOSA",
     image:
       "https://www.figma.com/api/mcp/asset/bd045215-bbb5-41b6-821b-524e949c13b6",
-    category: "LIFESTYLE",
+    category: "ESSENCE",
   },
   {
     id: 5,
@@ -95,7 +93,7 @@ export const projects: Project[] = [
     folderName: "PRECIOUS TRAD ",
     image:
       "https://www.figma.com/api/mcp/asset/264ec26d-dd37-4ab1-8916-86e1319c2b4b",
-    category: "PORTRAITS",
+    category: "ESSENCE",
   },
   {
     id: 7,
@@ -164,7 +162,7 @@ export const projects: Project[] = [
     coverFile: "IMG_2295 copy.jpg",
     image:
       "https://www.figma.com/api/mcp/asset/3db72941-d03f-485c-bd2c-7e470486dd9f",
-    category: "PORTRAITS",
+    category: "ESSENCE",
   },
   {
     id: 14,
@@ -330,7 +328,7 @@ export const projects: Project[] = [
     folderName: "JULIET IBRAHIM",
     image:
       "https://www.figma.com/api/mcp/asset/61586de8-8105-49b9-8fd4-d791ae217211",
-    category: "PORTRAITS",
+    category: "ESSENCE",
   },
   {
     id: 32,
@@ -357,7 +355,7 @@ export const projects: Project[] = [
     folderName: "MIDE ",
     image:
       "https://www.figma.com/api/mcp/asset/185bf725-d578-4a7a-a575-2d14b8fdfcff",
-    category: "PORTRAITS",
+    category: "ESSENCE",
   },
   {
     id: 35,
@@ -373,6 +371,7 @@ export const projects: Project[] = [
     name: "MOYIN 01",
     slug: "moyin-01",
     folderName: "MOYIN PRE WEDDING/1",
+    coverFile: "IMG_4593.jpg",   // couple shot — bride & groom together
     image:
       "https://www.figma.com/api/mcp/asset/d61f27f8-664b-4489-8cb7-76b4f212c62c",
     category: "WEDDING",
@@ -438,6 +437,7 @@ export const projects: Project[] = [
     name: "MOYIN YOR",
     slug: "moyin-yor",
     folderName: "MOYIN PRE WEDDING/YOR",
+    coverFile: "IMG_4788 copy.jpg",  // couple shot — bride & groom together
     image:
       "https://www.figma.com/api/mcp/asset/1bb2a4b2-d5ef-45df-bfb4-72fd254117a5",
     category: "WEDDING",
@@ -458,7 +458,7 @@ export const projects: Project[] = [
     folderName: "DOYIN",
     image:
       "https://www.figma.com/api/mcp/asset/81b84860-9ff0-4171-b75b-ac6ce717e9ad",
-    category: "PORTRAITS",
+    category: "ESSENCE",
   },
 ];
 
