@@ -122,7 +122,7 @@ function MobileCell({ collection, index }: { collection: CollectionSummary; inde
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-20px" }}
-      transition={{ duration: 0.3, delay: (index % 3) * 0.04 }}
+      transition={{ duration: 0.3, delay: (index % 2) * 0.05 }}
     >
       <Link
         href={getHref(collection)}
@@ -184,7 +184,7 @@ export default function GalleryGrid({ collections, onLoadMore, hasMore }: Galler
   if (bp === "mobile") {
     return (
       <div style={{ width: "100%" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "2px", background: "#000" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "2px", background: "#000" }}>
           {display.map((collection, i) => (
             <MobileCell key={`${i}-${collection.id}`} collection={collection} index={i} />
           ))}
