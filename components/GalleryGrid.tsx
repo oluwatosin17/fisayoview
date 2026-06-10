@@ -22,7 +22,7 @@ function localFilename(url: string): string | null {
 const CARD_SIZES = {
   desktop: { height: 567, padding: 100, imgW: 303, imgH: 367 },
   tablet:  { height: 460, padding: 60,  imgW: 240, imgH: 290 },
-  mobile:  { height: 380, padding: 32,  imgW: 200, imgH: 240 },
+  mobile:  { height: 567, padding: 100, imgW: 303, imgH: 367 }, // matches Figma: same card height as desktop, 1 column
 };
 
 /** Number of columns per breakpoint */

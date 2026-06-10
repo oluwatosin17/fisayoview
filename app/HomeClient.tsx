@@ -19,7 +19,7 @@ interface Props {
 
 export default function HomeClient({ coverImages, collections }: Props) {
   const bp = useBreakpoint();
-  const navHeight = bp === "mobile" ? "104px" : "64px";
+  const navHeight = bp === "mobile" ? "96px" : "64px";
 
   // Always start with defaults so server + client render identically (no hydration mismatch).
   // sessionStorage is read in useEffect (client-only) and applied after first paint.
