@@ -1,5 +1,5 @@
 {
-  "buildCommand": "NEXT_TEST_WASM_DIR=$(pwd)/node_modules/@next/swc-wasm-nodejs next build --webpack",
+  "buildCommand": "npm run build",
   "framework": "nextjs",
   "env": {
     "NEXT_PUBLIC_SUPABASE_URL": "https://jiozqlwcaohekmxhksky.supabase.co",

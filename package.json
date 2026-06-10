@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "NEXT_TEST_WASM_DIR=./node_modules/@next/swc-wasm-nodejs next dev --webpack",
-    "build": "NEXT_TEST_WASM_DIR=./node_modules/@next/swc-wasm-nodejs next build --webpack",
+    "build": "node scripts/build.mjs",
     "start": "next start",
     "lint": "eslint"
   },
