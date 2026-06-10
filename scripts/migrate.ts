@@ -12,9 +12,44 @@
 
 import fs from "fs";
 import path from "path";
+import os from "os";
+import { execSync } from "child_process";
 import { v2 as cloudinary } from "cloudinary";
 import { createClient } from "@supabase/supabase-js";
 import "dotenv/config";
+
+const MAX_UPLOAD_BYTES = 9_500_000; // 9.5 MB — stay under Cloudinary 10 MB limit
+
+/**
+ * If the file is larger than MAX_UPLOAD_BYTES, use `sips` (macOS) to
+ * resize it to max 3000px on the long edge and write to a temp file.
+ * Returns the path to upload (original or temp).
+ */
+function prepareForUpload(localPath: string): { uploadPath: string; isTmp: boolean } {
+  const size = fs.statSync(localPath).size;
+  if (size <= MAX_UPLOAD_BYTES) return { uploadPath: localPath, isTmp: false };
+
+  const tmpPath = path.join(os.tmpdir(), `fv_${path.basename(localPath)}`);
+  try {
+    // sips -Z maxLongerEdge --setProperty formatOptions 82 input output
+    execSync(
+      `sips -Z 3000 --setProperty formatOptions 82 "${localPath}" --out "${tmpPath}" 2>/dev/null`,
+      { stdio: "pipe" }
+    );
+    const newSize = fs.statSync(tmpPath).size;
+    if (newSize <= MAX_UPLOAD_BYTES) {
+      return { uploadPath: tmpPath, isTmp: true };
+    }
+    // Still too big — try harder (Z 2000, quality 70)
+    execSync(
+      `sips -Z 2000 --setProperty formatOptions 70 "${localPath}" --out "${tmpPath}" 2>/dev/null`,
+      { stdio: "pipe" }
+    );
+    return { uploadPath: tmpPath, isTmp: true };
+  } catch {
+    return { uploadPath: localPath, isTmp: false }; // fallback — try anyway
+  }
+}
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
@@ -130,12 +165,12 @@ async function uploadImage(
     // Not uploaded yet — upload now
   }
 
+  const { uploadPath, isTmp } = prepareForUpload(localPath);
   try {
-    const result = await cloudinary.uploader.upload(localPath, {
+    const result = await cloudinary.uploader.upload(uploadPath, {
       public_id: publicId,
       overwrite: false,
       resource_type: "image",
-      // Auto-quality + format on delivery (no transformation at upload time)
     });
     return {
       url: result.secure_url,
@@ -145,6 +180,8 @@ async function uploadImage(
   } catch (e) {
     console.error(`  ✗ Upload failed: ${localPath}`, e);
     return null;
+  } finally {
+    if (isTmp && fs.existsSync(uploadPath)) fs.unlinkSync(uploadPath);
   }
 }
 

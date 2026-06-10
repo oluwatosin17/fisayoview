@@ -1,0 +1,8 @@
+{
+  "buildCommand": "NEXT_TEST_WASM_DIR=$(pwd)/node_modules/@next/swc-wasm-nodejs next build --webpack",
+  "framework": "nextjs",
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://jiozqlwcaohekmxhksky.supabase.co",
+    "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME": "oluwatosin17"
+  }
+}
