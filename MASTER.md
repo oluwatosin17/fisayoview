@@ -250,16 +250,19 @@ Run: `npx tsx --env-file=.env.local scripts/migrate.ts`
 | OMOLOLA WEDDING folder is empty on disk | Known | id=44 mapped to OMOLOLA PRE WEDDING/2 instead |
 | macOS `._` resource fork files in folders | Fixed | Filtered with `!f.startsWith('.')` in getProjectImages |
 | Some folder names have trailing spaces | Known | Exact strings preserved in `folderName` field |
-| Local fallback needs `/Volumes/FV 1` mounted | Known | When Supabase is populated, local fallback not needed |
-| Migration may have failed partway through | Pending | Re-run `scripts/migrate.ts` — idempotent |
+| Local fallback needs `/Volumes/FV 1` mounted | Known | Supabase is now fully populated — local fallback not needed for prod |
+| Migration 100% complete | ✅ DONE | 45/45 collections, 380 images in Supabase + Cloudinary |
+| Vercel env vars not persisted | ✅ FIXED | Used `vercel env add` to save all 6 vars to project (production+preview+development) |
+| Detail page showed 1 image in production | ✅ FIXED | Root cause: env vars not saved, Supabase unreachable, fell back to empty local FS |
 | ESLint warning on Vercel build | Non-blocking | "Cannot find module eslint-config-next/core-web-vitals" — build succeeds despite warning |
+| 4 images >9.5MB (Cloudinary limit) | ✅ FIXED | Compressed to 1200px/q60 with sips, uploaded manually |
 
 ---
 
 ## 13. Pending Tasks
 
-- [ ] **Complete migration**: Re-run `npx tsx --env-file=.env.local scripts/migrate.ts` to ensure all 45 collections and all images are in Cloudinary + Supabase
-- [ ] **Verify cloud mode**: Once migration complete, check that `lib/data.ts` is returning Cloudinary URLs (not local `/api/serve/` paths) in production
+- [x] **Complete migration**: 45/45 collections, 380 images in Cloudinary + Supabase ✅
+- [x] **Verify cloud mode**: Production confirmed serving Cloudinary URLs (29 per detail page) ✅
 - [ ] **Custom domain**: Set up a custom domain in Vercel (currently `fisayoview.vercel.app`)
 - [ ] **Contact page**: `/contact` route not yet built (just a nav link)
 - [ ] **About page**: `/about` route not yet built
