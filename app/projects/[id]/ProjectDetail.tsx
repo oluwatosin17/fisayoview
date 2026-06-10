@@ -29,8 +29,8 @@ export default function ProjectDetail({ project, images, initialIndex }: Props) 
     ? (images[activeIndex] ?? images[0])
     : project.fallbackImage ?? "";
 
-  const backLabel =
-    project.handle ?? project.name.toLowerCase().replace(/\s+/g, ".");
+  // Always show the project name as back label (not the Instagram handle)
+  const backLabel = project.name.toLowerCase().replace(/\s+/g, ".");
 
   return (
     <div style={{ background: "#000", minHeight: "100vh", paddingTop: "64px" }}>

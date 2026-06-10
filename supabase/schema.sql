@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS collections (
   id                    SERIAL        PRIMARY KEY,
   name                  TEXT          NOT NULL,
   slug                  TEXT          UNIQUE NOT NULL,
-  category              TEXT          NOT NULL CHECK (category IN ('WEDDING','BIRTHDAY','GRADUATION','LAW','OTHER')),
+  category              TEXT          NOT NULL CHECK (category IN ('WEDDING','BIRTHDAY','GRADUATION','STUDIO','PORTRAITS','LIFESTYLE','OTHER')),
   folder_name           TEXT,                          -- original local folder path
   cover_cloudinary_id   TEXT,                          -- Cloudinary public_id for gallery card
   cover_url             TEXT,                          -- pre-built Cloudinary delivery URL

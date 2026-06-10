@@ -1,4 +1,11 @@
-export type Category = "ALL" | "WEDDING" | "BIRTHDAY" | "GRADUATION" | "LAW";
+export type Category =
+  | "ALL"
+  | "WEDDING"
+  | "BIRTHDAY"
+  | "GRADUATION"
+  | "STUDIO"
+  | "PORTRAITS"
+  | "LIFESTYLE";
 
 export interface Project {
   id: number;
@@ -23,11 +30,13 @@ export interface Project {
 
 export const categories: { label: string; value: Category; count: number }[] =
   [
-    { label: "ALL PROJECT", value: "ALL", count: 40 },
-    { label: "WEDDING", value: "WEDDING", count: 10 },
-    { label: "BIRTHDAY", value: "BIRTHDAY", count: 9 },
-    { label: "GRADUATION", value: "GRADUATION", count: 7 },
-    { label: "LAW", value: "LAW", count: 7 },
+    { label: "ALL PROJECT",  value: "ALL",        count: 45 },
+    { label: "BIRTHDAY",     value: "BIRTHDAY",   count: 19 },
+    { label: "WEDDING",      value: "WEDDING",    count: 9  },
+    { label: "GRADUATION",   value: "GRADUATION", count: 5  },
+    { label: "STUDIO",       value: "STUDIO",     count: 6  },
+    { label: "PORTRAITS",    value: "PORTRAITS",  count: 5  },
+    { label: "LIFESTYLE",    value: "LIFESTYLE",  count: 1  },
   ];
 
 export const projects: Project[] = [
@@ -48,7 +57,7 @@ export const projects: Project[] = [
     coverFile: "IMG_1455.jpg",
     image:
       "https://www.figma.com/api/mcp/asset/4b1676ba-cbcb-475d-a63b-0c08653ffe16",
-    category: "WEDDING",
+    category: "GRADUATION",
   },
   {
     id: 3,
@@ -57,7 +66,7 @@ export const projects: Project[] = [
     folderName: "TEMILADE",
     image:
       "https://www.figma.com/api/mcp/asset/bee9120f-fa8a-428a-8e1b-148003738f83",
-    category: "GRADUATION",
+    category: "BIRTHDAY",
   },
   {
     id: 4,
@@ -66,7 +75,7 @@ export const projects: Project[] = [
     folderName: "GABRIEL OGHOSA",
     image:
       "https://www.figma.com/api/mcp/asset/bd045215-bbb5-41b6-821b-524e949c13b6",
-    category: "BIRTHDAY",
+    category: "LIFESTYLE",
   },
   {
     id: 5,
@@ -75,7 +84,7 @@ export const projects: Project[] = [
     folderName: "KEVWE",
     image:
       "https://www.figma.com/api/mcp/asset/9beca0d5-187a-471b-816d-334d6d7b064a",
-    category: "BIRTHDAY",
+    category: "STUDIO",
     instagramUrl: "https://www.instagram.com/r_i.nah/",
     handle: "r_i.nah",
   },
@@ -86,7 +95,7 @@ export const projects: Project[] = [
     folderName: "PRECIOUS TRAD ",
     image:
       "https://www.figma.com/api/mcp/asset/264ec26d-dd37-4ab1-8916-86e1319c2b4b",
-    category: "WEDDING",
+    category: "PORTRAITS",
   },
   {
     id: 7,
@@ -97,7 +106,7 @@ export const projects: Project[] = [
       "https://www.figma.com/api/mcp/asset/b0701bb4-765a-47b7-ad90-d7447bf3190c",
     labelBgImage:
       "https://www.figma.com/api/mcp/asset/e07f6ae0-fa26-4fd2-8818-affe3980d1f6",
-    category: "GRADUATION",
+    category: "BIRTHDAY",
     handle: "ari.abiodun",
   },
   {
@@ -107,7 +116,7 @@ export const projects: Project[] = [
     folderName: "STARR",
     image:
       "https://www.figma.com/api/mcp/asset/ec5abdf4-6ff0-4bc6-b95b-bc071c7a725f",
-    category: "BIRTHDAY",
+    category: "STUDIO",
     instagramUrl: "https://www.instagram.com/unusual_star_/",
     handle: "unusual_star_",
   },
@@ -118,7 +127,7 @@ export const projects: Project[] = [
     folderName: "TOMI",
     image:
       "https://www.figma.com/api/mcp/asset/a7502fa2-f669-4cc3-9c31-a7d50b91cd26",
-    category: "GRADUATION",
+    category: "BIRTHDAY",
   },
   {
     id: 10,
@@ -127,7 +136,7 @@ export const projects: Project[] = [
     folderName: "BLOSSOM CALL TO BAR",
     image:
       "https://www.figma.com/api/mcp/asset/e5c90c84-a895-4ee9-b959-53d6c1bfe303",
-    category: "LAW",
+    category: "GRADUATION",
   },
   {
     id: 11,
@@ -155,7 +164,7 @@ export const projects: Project[] = [
     coverFile: "IMG_2295 copy.jpg",
     image:
       "https://www.figma.com/api/mcp/asset/3db72941-d03f-485c-bd2c-7e470486dd9f",
-    category: "BIRTHDAY",
+    category: "PORTRAITS",
   },
   {
     id: 14,
@@ -164,7 +173,7 @@ export const projects: Project[] = [
     folderName: "TIANA",
     image:
       "https://www.figma.com/api/mcp/asset/6488013e-3a06-4c7d-96ef-3fcae7454150",
-    category: "GRADUATION",
+    category: "BIRTHDAY",
   },
   {
     id: 15,
@@ -202,7 +211,7 @@ export const projects: Project[] = [
     coverFile: "IMG_9856.jpg",
     image:
       "https://www.figma.com/api/mcp/asset/335b3732-5460-4951-8a4c-2e04bb6a2f61",
-    category: "GRADUATION",
+    category: "BIRTHDAY",
   },
   {
     id: 19,
@@ -211,7 +220,7 @@ export const projects: Project[] = [
     folderName: "OLABANJI",
     image:
       "https://www.figma.com/api/mcp/asset/a02531ae-511b-4ce4-a437-615537948aee",
-    category: "WEDDING",
+    category: "BIRTHDAY",
   },
   {
     id: 20,
@@ -229,7 +238,7 @@ export const projects: Project[] = [
     folderName: "CHRISTMAS",
     image:
       "https://www.figma.com/api/mcp/asset/7d868792-08ad-4112-b7a7-a06ac64cbd21",
-    category: "BIRTHDAY",
+    category: "STUDIO",
   },
   {
     id: 22,
@@ -258,7 +267,7 @@ export const projects: Project[] = [
     coverFile: "IMG_7496 copy.jpg",
     image:
       "https://www.figma.com/api/mcp/asset/f6409732-f243-4960-b3ae-946f2ad88e33",
-    category: "GRADUATION",
+    category: "BIRTHDAY",
   },
   {
     id: 25,
@@ -276,7 +285,7 @@ export const projects: Project[] = [
     folderName: "FAVOUR",
     image:
       "https://www.figma.com/api/mcp/asset/abd60537-0710-4588-81df-e8feb1423570",
-    category: "WEDDING",
+    category: "BIRTHDAY",
   },
   {
     id: 27,
@@ -285,7 +294,7 @@ export const projects: Project[] = [
     folderName: "ELIJAH CONVOCATION",
     image:
       "https://www.figma.com/api/mcp/asset/33d9b854-fd50-4299-a16f-dd5f9f3dec65",
-    category: "LAW",
+    category: "GRADUATION",
   },
   {
     id: 28,
@@ -294,7 +303,7 @@ export const projects: Project[] = [
     folderName: "EZEKIEL CALL TO BAR",
     image:
       "https://www.figma.com/api/mcp/asset/fd009c10-da83-4063-b5ac-f253460f697d",
-    category: "LAW",
+    category: "GRADUATION",
   },
   {
     id: 29,
@@ -303,7 +312,7 @@ export const projects: Project[] = [
     folderName: "FEHIN",
     image:
       "https://www.figma.com/api/mcp/asset/67ecf919-4424-4741-8e7c-934452e71fc2",
-    category: "WEDDING",
+    category: "BIRTHDAY",
   },
   {
     id: 30,
@@ -312,7 +321,7 @@ export const projects: Project[] = [
     folderName: "IBIFUBARA",
     image:
       "https://www.figma.com/api/mcp/asset/3c7419db-a75d-412d-a181-8ca1e91ada52",
-    category: "BIRTHDAY",
+    category: "STUDIO",
   },
   {
     id: 31,
@@ -321,7 +330,7 @@ export const projects: Project[] = [
     folderName: "JULIET IBRAHIM",
     image:
       "https://www.figma.com/api/mcp/asset/61586de8-8105-49b9-8fd4-d791ae217211",
-    category: "WEDDING",
+    category: "PORTRAITS",
   },
   {
     id: 32,
@@ -330,7 +339,7 @@ export const projects: Project[] = [
     folderName: "KINDNNESS CONVOCATION",
     image:
       "https://www.figma.com/api/mcp/asset/44b401d3-113d-44e8-9f77-6d80357188b3",
-    category: "GRADUATION",
+    category: "BIRTHDAY",
   },
   {
     id: 33,
@@ -339,7 +348,7 @@ export const projects: Project[] = [
     folderName: "MAYOWA",
     image:
       "https://www.figma.com/api/mcp/asset/3f5dbb52-55e1-4787-9cde-456e4a42d249",
-    category: "BIRTHDAY",
+    category: "STUDIO",
   },
   {
     id: 34,
@@ -348,7 +357,7 @@ export const projects: Project[] = [
     folderName: "MIDE ",
     image:
       "https://www.figma.com/api/mcp/asset/185bf725-d578-4a7a-a575-2d14b8fdfcff",
-    category: "WEDDING",
+    category: "PORTRAITS",
   },
   {
     id: 35,
@@ -357,7 +366,7 @@ export const projects: Project[] = [
     folderName: "MINAT",
     image:
       "https://www.figma.com/api/mcp/asset/a971c60a-7169-4a49-9e88-e22ab96d6185",
-    category: "BIRTHDAY",
+    category: "STUDIO",
   },
   {
     id: 36,
@@ -366,7 +375,7 @@ export const projects: Project[] = [
     folderName: "MOYIN PRE WEDDING/1",
     image:
       "https://www.figma.com/api/mcp/asset/d61f27f8-664b-4489-8cb7-76b4f212c62c",
-    category: "LAW",
+    category: "WEDDING",
   },
   {
     id: 37,
@@ -404,7 +413,7 @@ export const projects: Project[] = [
     coverFile: "IMG_5660.jpg",
     image:
       "https://www.figma.com/api/mcp/asset/cf5476ba-bf90-4a4e-99ed-b4c342a95a35",
-    category: "LAW",
+    category: "WEDDING",
   },
   {
     id: 41,
@@ -413,7 +422,7 @@ export const projects: Project[] = [
     folderName: "MRS OSEZUA",
     image:
       "https://www.figma.com/api/mcp/asset/b4312352-672a-4cc0-9d54-05edc3a5ea1e",
-    category: "WEDDING",
+    category: "BIRTHDAY",
   },
   {
     id: 42,
@@ -431,7 +440,7 @@ export const projects: Project[] = [
     folderName: "MOYIN PRE WEDDING/YOR",
     image:
       "https://www.figma.com/api/mcp/asset/1bb2a4b2-d5ef-45df-bfb4-72fd254117a5",
-    category: "GRADUATION",
+    category: "WEDDING",
   },
   {
     id: 44,
@@ -440,7 +449,7 @@ export const projects: Project[] = [
     folderName: "OMOLOLA PRE WEDDING/2",
     image:
       "https://www.figma.com/api/mcp/asset/1e2326c5-23bf-4f06-bca6-2b3f5d9ddb13",
-    category: "LAW",
+    category: "WEDDING",
   },
   {
     id: 45,
@@ -449,7 +458,7 @@ export const projects: Project[] = [
     folderName: "DOYIN",
     image:
       "https://www.figma.com/api/mcp/asset/81b84860-9ff0-4171-b75b-ac6ce717e9ad",
-    category: "WEDDING",
+    category: "PORTRAITS",
   },
 ];
 

@@ -12,9 +12,9 @@ interface NavbarProps {
 }
 
 const NAV_LINKS = [
-  { label: "ABOUT", href: "/about", external: false },
-  { label: "CONTACT", href: "/contact", external: false },
-  { label: "INSTAGRAM", href: "https://www.instagram.com", external: true },
+  { label: "ABOUT",      href: "/about",                              external: false },
+  { label: "CONTACT",    href: "/contact",                             external: false },
+  { label: "INSTAGRAM",  href: "https://www.instagram.com/fisayoview/", external: true  },
 ];
 
 export default function Navbar({

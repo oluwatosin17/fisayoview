@@ -26,28 +26,53 @@ export default function HomeClient({ coverImages, collections }: Props) {
 
   const filtered = useMemo(() => {
     if (activeCategory === "ALL") return collections;
-    return collections.filter(
-      (c) => c.category === (activeCategory as string)
-    );
+    return collections.filter((c) => c.category === (activeCategory as string));
   }, [activeCategory, collections]);
 
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
 
-  // Restore scroll position after content mounts
+  // Restore scroll position when navigating back.
+  // Uses a retry loop because the page needs height before it can scroll.
   useEffect(() => {
     if (restoredRef.current) return;
     restoredRef.current = true;
-    const savedY = sessionStorage.getItem(SCROLL_KEY);
-    if (savedY) {
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: parseInt(savedY, 10), behavior: "instant" });
-        sessionStorage.removeItem(SCROLL_KEY);
-      });
-    }
-  }, []);
 
-  // Persist scroll position continuously
+    const savedY = sessionStorage.getItem(SCROLL_KEY);
+    if (!savedY) return;
+    sessionStorage.removeItem(SCROLL_KEY);
+
+    const targetY = parseInt(savedY, 10);
+    if (targetY <= 0) return;
+
+    let attempts = 0;
+    const MAX_ATTEMPTS = 30; // ~600ms total
+
+    function tryScroll() {
+      // Stop if we've reached the target (±5px) or run out of attempts
+      if (attempts >= MAX_ATTEMPTS) return;
+      attempts++;
+
+      const pageHeight = document.documentElement.scrollHeight;
+      if (pageHeight > targetY + window.innerHeight) {
+        // Page has enough height — scroll now
+        window.scrollTo({ top: targetY, behavior: "instant" });
+        // Verify we got there (content can shift during lazy load)
+        requestAnimationFrame(() => {
+          if (Math.abs(window.scrollY - targetY) > 20) {
+            window.scrollTo({ top: targetY, behavior: "instant" });
+          }
+        });
+      } else {
+        // Not enough height yet — wait a tick and retry
+        requestAnimationFrame(tryScroll);
+      }
+    }
+
+    requestAnimationFrame(tryScroll);
+  }, []); // run once on mount
+
+  // Persist scroll position + visibleCount on every scroll
   useEffect(() => {
     const save = () => {
       sessionStorage.setItem(SCROLL_KEY, String(Math.round(window.scrollY)));
