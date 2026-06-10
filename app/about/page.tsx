@@ -155,16 +155,27 @@ export default function AboutPage() {
           transition={{ duration: 0.55, ease: EASE_OUT }}
           style={{ padding: "48px 40px", display: "flex", gap: "24px", alignItems: "flex-start" }}
         >
-          {/* Portrait */}
-          <div style={{ flex: "0 0 320px", height: "520px", position: "relative", overflow: "hidden", borderRadius: "2px" }}>
-            <AnimatePresence mode="wait">
+          {/* Portrait — swipeable */}
+          <div style={{ flex: "0 0 320px", height: "520px", position: "relative", overflow: "hidden", borderRadius: "2px", cursor: ABOUT_IMAGES.length > 1 ? "grab" : "default" }}>
+            <AnimatePresence custom={dir} mode="wait">
               <motion.img
-                key={activeIndex}
+                key={swipeIndex}
+                custom={dir}
+                variants={slideVariants}
+                initial="enter" animate="center" exit="exit"
+                transition={{ duration: 0.3, ease: EASE_OUT }}
                 src={ABOUT_IMAGES[activeIndex].url}
                 alt="Fisayo"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+                draggable={false}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.12}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x < -50) navigate(activeIndex + 1);
+                  else if (info.offset.x > 50) navigate(activeIndex - 1);
+                }}
+                whileDrag={{ cursor: "grabbing" }}
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", touchAction: "pan-y", userSelect: "none" }}
               />
             </AnimatePresence>
           </div>
@@ -185,16 +196,27 @@ export default function AboutPage() {
           style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "60px 120px" }}
         >
           <div style={{ display: "flex", gap: "24px", alignItems: "flex-start" }}>
-            {/* Portrait — 516×700 */}
-            <div style={{ width: "516px", height: "700px", flexShrink: 0, position: "relative", overflow: "hidden" }}>
-              <AnimatePresence mode="wait">
+            {/* Portrait — 516×700, swipeable */}
+            <div style={{ width: "516px", height: "700px", flexShrink: 0, position: "relative", overflow: "hidden", cursor: ABOUT_IMAGES.length > 1 ? "grab" : "default" }}>
+              <AnimatePresence custom={dir} mode="wait">
                 <motion.img
-                  key={activeIndex}
+                  key={swipeIndex}
+                  custom={dir}
+                  variants={slideVariants}
+                  initial="enter" animate="center" exit="exit"
+                  transition={{ duration: 0.3, ease: EASE_OUT }}
                   src={ABOUT_IMAGES[activeIndex].url}
                   alt="Fisayo"
-                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+                  draggable={false}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.12}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -50) navigate(activeIndex + 1);
+                    else if (info.offset.x > 50) navigate(activeIndex - 1);
+                  }}
+                  whileDrag={{ cursor: "grabbing" }}
+                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", touchAction: "pan-y", userSelect: "none" }}
                 />
               </AnimatePresence>
             </div>

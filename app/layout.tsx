@@ -12,6 +12,13 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: "FISAYOVIEW",
   description: "Photography portfolio by Fisayo",
+  icons: {
+    icon: [
+      { url: "/logo-black.png", media: "(prefers-color-scheme: light)" },
+      { url: "/logo-white.png", media: "(prefers-color-scheme: dark)" },
+    ],
+    apple: "/logo-black.png",
+  },
 };
 
 export default function RootLayout({

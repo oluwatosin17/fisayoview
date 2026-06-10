@@ -165,11 +165,15 @@ export default function Navbar({
         {/* ── Desktop / Tablet ── */}
         {!isMobile && (
           <>
-            <Link href="/" {...hoverProps("logo")} style={{ ...baseTextStyle, fontSize: "12px", position: "absolute", left: "60px", top: "24px", color: "#fff", opacity: itemOpacity("logo"), transition: "opacity 0.2s ease" }}>
+            <Link href="/" {...hoverProps("logo")} style={{ ...baseTextStyle, fontSize: "12px", position: "absolute", left: "60px", top: "50%", transform: "translateY(-50%)", color: "#fff", opacity: itemOpacity("logo"), transition: "opacity 0.2s ease", display: "flex", alignItems: "center", gap: "6px" }}>
+              <span style={{ width: "14px", height: "14px", background: "#fff", borderRadius: "0.84px", flexShrink: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo-black.png" alt="FV" style={{ width: "10px", height: "10px", objectFit: "contain", display: "block" }} />
+              </span>
               FISAYOVIEW
             </Link>
 
-            <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", top: "24px", display: "flex", alignItems: "center", gap: "11px" }}>
+            <div style={{ position: "absolute", left: "50%", transform: "translate(-50%, -50%)", top: "50%", display: "flex", alignItems: "center", gap: "11px" }}>
               {categories.map((cat) => {
                 const isActive = !allMuted && activeCategory === cat.value;
                 const id = `cat-${cat.value}`;
@@ -182,7 +186,7 @@ export default function Navbar({
               })}
             </div>
 
-            <div style={{ position: "absolute", right: "60px", top: "24px", display: "flex", alignItems: "center", gap: "11px" }}>
+            <div style={{ position: "absolute", right: "60px", top: "50%", transform: "translateY(-50%)", display: "flex", alignItems: "center", gap: "11px" }}>
               <Link href="/about" {...hoverProps("nav-ABOUT")} style={{ ...baseTextStyle, fontSize: "12px", color: pathname === "/about" ? "#fff" : "#808080", opacity: itemOpacity("nav-ABOUT"), transition: "opacity 0.2s ease" }}>ABOUT</Link>
               <button onClick={openContact} {...hoverProps("nav-CONTACT")} style={{ ...baseTextStyle, fontSize: "12px", color: showContact ? "#fff" : "#808080", opacity: itemOpacity("nav-CONTACT"), transition: "opacity 0.2s ease" }}>CONTACT</button>
               <a href="https://www.instagram.com/fisayoview/" target="_blank" rel="noopener noreferrer" {...hoverProps("nav-INSTAGRAM")} style={{ ...baseTextStyle, fontSize: "12px", color: "#808080", opacity: itemOpacity("nav-INSTAGRAM"), transition: "opacity 0.2s ease" }}>INSTAGRAM</a>
@@ -200,7 +204,13 @@ export default function Navbar({
               padding: "0 16px",
               borderBottom: "1px solid #1a1a1a",
             }}>
-              <Link href="/" style={{ ...baseTextStyle, fontSize: "11px", color: "#fff" }}>FISAYOVIEW</Link>
+              <Link href="/" style={{ ...baseTextStyle, fontSize: "11px", color: "#fff", display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={{ width: "14px", height: "14px", background: "#fff", borderRadius: "0.84px", flexShrink: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/logo-black.png" alt="FV" style={{ width: "10px", height: "10px", objectFit: "contain", display: "block" }} />
+                </span>
+                FISAYOVIEW
+              </Link>
               <div style={{ display: "flex", gap: "11px", alignItems: "center" }}>
                 <Link href="/about" style={{ ...baseTextStyle, fontSize: "11px", color: pathname === "/about" ? "#fff" : "#808080" }}>ABOUT</Link>
                 <button onClick={openContact} style={{ ...baseTextStyle, fontSize: "11px", color: showContact ? "#fff" : "#808080" }}>CONTACT</button>
