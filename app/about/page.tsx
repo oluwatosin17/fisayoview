@@ -112,7 +112,10 @@ export default function AboutPage() {
                   FISAYOVIEW
                 </p>
                 <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                  <span
+                  <a
+                    href="https://wa.me/2348136404224"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     style={{
                       fontSize: "12px",
                       fontFamily: "var(--font-geist-sans)",
@@ -120,13 +123,15 @@ export default function AboutPage() {
                       color: "#b3b3b3",
                       lineHeight: "18px",
                       whiteSpace: "nowrap",
+                      textDecoration: "none",
                     }}
                   >
                     08136404224
-                  </span>
+                  </a>
                   {/* Dot separator */}
                   <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#b3b3b3", flexShrink: 0 }} />
-                  <span
+                  <a
+                    href="mailto:bookfisayoview@gmail.com"
                     style={{
                       fontSize: "12px",
                       fontFamily: "var(--font-geist-sans)",
@@ -134,10 +139,11 @@ export default function AboutPage() {
                       color: "#b3b3b3",
                       lineHeight: "18px",
                       whiteSpace: "nowrap",
+                      textDecoration: "none",
                     }}
                   >
                     bookfisayoview@gmail.com
-                  </span>
+                  </a>
                 </div>
               </div>
 

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { categories, type Category } from "@/lib/projects";
 
@@ -22,6 +23,7 @@ export default function Navbar({
   onCategoryChange,
   allMuted = false,
 }: NavbarProps) {
+  const pathname = usePathname();
   const [hidden, setHidden] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const { scrollY } = useScroll();
@@ -147,6 +149,7 @@ export default function Navbar({
       >
         {NAV_LINKS.map(({ label, href, external }) => {
           const id = `nav-${label}`;
+          const isActivePage = !external && pathname === href;
           return (
             <a
               key={label}
@@ -156,7 +159,7 @@ export default function Navbar({
               {...hoverProps(id)}
               style={{
                 ...baseTextStyle,
-                color: "#808080",
+                color: isActivePage ? "#fff" : "#808080",
                 opacity: itemOpacity(id),
                 transition: "opacity 0.2s ease",
               }}

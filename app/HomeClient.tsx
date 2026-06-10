@@ -9,6 +9,7 @@ import type { Category } from "@/lib/projects";
 const PAGE_SIZE = 15;
 const SCROLL_KEY = "fisayoview_scrollY";
 const COUNT_KEY = "fisayoview_visibleCount";
+const CAT_KEY   = "fisayoview_category";
 
 interface Props {
   coverImages: Record<number, string>;
@@ -16,7 +17,10 @@ interface Props {
 }
 
 export default function HomeClient({ coverImages, collections }: Props) {
-  const [activeCategory, setActiveCategory] = useState<Category>("ALL");
+  const [activeCategory, setActiveCategory] = useState<Category>(() => {
+    if (typeof window === "undefined") return "ALL";
+    return (sessionStorage.getItem(CAT_KEY) as Category) ?? "ALL";
+  });
   const [visibleCount, setVisibleCount] = useState(() => {
     if (typeof window === "undefined") return PAGE_SIZE;
     const saved = sessionStorage.getItem(COUNT_KEY);
@@ -40,31 +44,35 @@ export default function HomeClient({ coverImages, collections }: Props) {
 
     const savedY = sessionStorage.getItem(SCROLL_KEY);
     if (!savedY) return;
-    sessionStorage.removeItem(SCROLL_KEY);
 
     const targetY = parseInt(savedY, 10);
-    if (targetY <= 0) return;
+    if (targetY <= 0) {
+      sessionStorage.removeItem(SCROLL_KEY);
+      return;
+    }
 
     let attempts = 0;
-    const MAX_ATTEMPTS = 30; // ~600ms total
+    const MAX_ATTEMPTS = 60; // ~1s total
 
     function tryScroll() {
-      // Stop if we've reached the target (±5px) or run out of attempts
-      if (attempts >= MAX_ATTEMPTS) return;
+      if (attempts >= MAX_ATTEMPTS) {
+        sessionStorage.removeItem(SCROLL_KEY);
+        return;
+      }
       attempts++;
 
       const pageHeight = document.documentElement.scrollHeight;
       if (pageHeight > targetY + window.innerHeight) {
-        // Page has enough height — scroll now
         window.scrollTo({ top: targetY, behavior: "instant" });
-        // Verify we got there (content can shift during lazy load)
+        // Verify we landed correctly (content can shift during image load)
         requestAnimationFrame(() => {
           if (Math.abs(window.scrollY - targetY) > 20) {
             window.scrollTo({ top: targetY, behavior: "instant" });
           }
+          // Only clear the key after a successful scroll
+          sessionStorage.removeItem(SCROLL_KEY);
         });
       } else {
-        // Not enough height yet — wait a tick and retry
         requestAnimationFrame(tryScroll);
       }
     }
@@ -72,7 +80,7 @@ export default function HomeClient({ coverImages, collections }: Props) {
     requestAnimationFrame(tryScroll);
   }, []); // run once on mount
 
-  // Persist scroll position + visibleCount on every scroll
+  // Persist scroll position, visibleCount, and category on every scroll
   useEffect(() => {
     const save = () => {
       sessionStorage.setItem(SCROLL_KEY, String(Math.round(window.scrollY)));
@@ -82,11 +90,17 @@ export default function HomeClient({ coverImages, collections }: Props) {
     return () => window.removeEventListener("scroll", save);
   }, [visibleCount]);
 
+  // Persist category whenever it changes
+  useEffect(() => {
+    sessionStorage.setItem(CAT_KEY, activeCategory);
+  }, [activeCategory]);
+
   function handleCategoryChange(cat: Category) {
     setActiveCategory(cat);
     setVisibleCount(PAGE_SIZE);
     sessionStorage.removeItem(SCROLL_KEY);
     sessionStorage.removeItem(COUNT_KEY);
+    // Keep CAT_KEY — it's updated via the useEffect above
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 
