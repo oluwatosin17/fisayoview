@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-type Status = "idle" | "loading" | "email_sent" | "link_ready" | "error";
+type Status = "idle" | "loading" | "done" | "error";
 
 export default function LoginForm() {
   const searchParams = useSearchParams();
@@ -17,15 +17,15 @@ export default function LoginForm() {
       ? "Link expired or already used — generate a new one."
       : ""
   );
-  const [loginLink, setLoginLink]   = useState("");
-  const [warning, setWarning]       = useState("");
+  const [loginLink, setLoginLink] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("loading");
     setErrorMsg("");
     setLoginLink("");
-    setWarning("");
+    setEmailSent(false);
 
     try {
       const res = await fetch("/api/admin/auth/send-magic-link", {
@@ -41,39 +41,18 @@ export default function LoginForm() {
         return;
       }
 
-      if (data.success) {
-        // Resend sent the email
-        setStatus("email_sent");
-      } else if (data.link) {
-        // Fallback: show direct link
-        setLoginLink(data.link);
-        if (data.warning) setWarning(data.warning);
-        setStatus("link_ready");
-      }
+      setLoginLink(data.link);
+      setEmailSent(data.emailSent ?? false);
+      setStatus("done");
     } catch {
       setErrorMsg("Network error. Please try again.");
       setStatus("error");
     }
   }
 
-  function reset() {
-    setStatus("idle");
-    setLoginLink("");
-    setWarning("");
-  }
-
-  const card: React.CSSProperties = {
-    background: "#111",
-    border: "1px solid #1a1a1a",
-    borderRadius: "16px",
-    padding: "32px",
-    width: "100%",
-    maxWidth: "360px",
-  };
-
   return (
     <div style={{ display: "flex", minHeight: "100vh", alignItems: "center", justifyContent: "center", padding: "16px", background: "#0a0a0a" }}>
-      <div style={card}>
+      <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "32px", width: "100%", maxWidth: "360px" }}>
 
         {/* Logo */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", marginBottom: "32px" }}>
@@ -86,58 +65,56 @@ export default function LoginForm() {
           </div>
         </div>
 
-        {/* ── Email sent ── */}
-        {status === "email_sent" && (
-          <div style={{ textAlign: "center", padding: "16px 0" }}>
-            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#22c55e22", color: "#22c55e", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", margin: "0 auto 16px" }}>✓</div>
-            <p style={{ color: "#fff", fontWeight: 500, margin: "0 0 8px" }}>Check your email</p>
-            <p style={{ color: "#808080", fontSize: "13px", lineHeight: 1.6, margin: "0 0 20px" }}>
-              We sent a sign-in link to<br />
-              <strong style={{ color: "#fff" }}>{email}</strong>
-            </p>
-            <p style={{ color: "#555", fontSize: "12px", margin: "0 0 20px" }}>
-              Can&apos;t find it? Check your spam folder.
-            </p>
-            <button onClick={reset} style={{ color: "#808080", fontSize: "12px", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-              Try a different email
-            </button>
-          </div>
-        )}
+        {/* ── Done state: always show the sign-in button ── */}
+        {status === "done" && loginLink && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
-        {/* ── Fallback direct link ── */}
-        {status === "link_ready" && loginLink && (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px", padding: "16px 0", textAlign: "center" }}>
-            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#22c55e22", color: "#22c55e", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>✓</div>
-            <div>
-              <p style={{ color: "#fff", fontWeight: 500, margin: "0 0 6px" }}>Your login link is ready</p>
-              {warning && <p style={{ color: "#f59e0b", fontSize: "12px", margin: "0 0 6px" }}>{warning}</p>}
-              <p style={{ color: "#808080", fontSize: "13px", margin: 0 }}>
-                Signed in as <strong style={{ color: "#fff" }}>{email}</strong>
-              </p>
-            </div>
-            <a href={loginLink} style={{ display: "block", width: "100%", background: "#fff", color: "#000", textDecoration: "none", padding: "12px 0", borderRadius: "8px", fontSize: "14px", fontWeight: 600, textAlign: "center" }}>
+            {/* Primary: click to sign in */}
+            <a
+              href={loginLink}
+              style={{ display: "block", background: "#fff", color: "#000", textDecoration: "none", padding: "14px 0", borderRadius: "8px", fontSize: "14px", fontWeight: 600, textAlign: "center" }}
+            >
               Sign in to Admin →
             </a>
-            <button onClick={reset} style={{ color: "#808080", fontSize: "12px", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+
+            {/* Secondary: email status */}
+            <div style={{ background: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: "8px", padding: "12px 14px" }}>
+              {emailSent ? (
+                <p style={{ margin: 0, fontSize: "12px", color: "#808080", lineHeight: 1.6 }}>
+                  ✓ A sign-in link was also sent to <strong style={{ color: "#fff" }}>{email}</strong>
+                  <br />
+                  <span style={{ color: "#555" }}>Check spam / Promotions if you don&apos;t see it.</span>
+                </p>
+              ) : (
+                <p style={{ margin: 0, fontSize: "12px", color: "#555", lineHeight: 1.6 }}>
+                  No email sent — use the button above to sign in directly.
+                </p>
+              )}
+            </div>
+
+            <button
+              onClick={() => { setStatus("idle"); setLoginLink(""); }}
+              style={{ color: "#555", fontSize: "12px", background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "center" }}
+            >
               Use a different email
             </button>
           </div>
         )}
 
         {/* ── Form ── */}
-        {(status === "idle" || status === "loading" || status === "error") && (
+        {status !== "done" && (
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
               <label htmlFor="email" style={{ display: "block", color: "#808080", fontSize: "12px", fontWeight: 500, marginBottom: "8px" }}>
                 Email address
               </label>
               <input
-                id="email" type="email" required value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@example.com"
+                id="email" type="email" required
+                value={email} onChange={(e) => setEmail(e.target.value)}
+                placeholder="bookfisayoview@gmail.com"
                 style={{ width: "100%", background: "#0a0a0a", border: "1px solid #1a1a1a", color: "#fff", borderRadius: "8px", padding: "12px 14px", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
                 onFocus={(e) => { e.currentTarget.style.borderColor = "#333"; }}
-                onBlur={(e) => { e.currentTarget.style.borderColor = "#1a1a1a"; }}
+                onBlur={(e)  => { e.currentTarget.style.borderColor = "#1a1a1a"; }}
               />
             </div>
 
@@ -151,7 +128,7 @@ export default function LoginForm() {
               type="submit" disabled={status === "loading"}
               style={{ width: "100%", background: "#fff", color: "#000", border: "none", borderRadius: "8px", padding: "13px 0", fontSize: "14px", fontWeight: 600, cursor: "pointer", opacity: status === "loading" ? 0.7 : 1 }}
             >
-              {status === "loading" ? "Sending…" : "Send login link"}
+              {status === "loading" ? "Generating link…" : "Get login link"}
             </button>
           </form>
         )}
