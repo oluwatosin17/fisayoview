@@ -22,11 +22,15 @@ export async function POST(request: Request) {
   }
 
   const admin = supabaseAdmin();
+  // Dynamic redirect — works on both vercel.app and custom domains
+  const origin = new URL(request.url).origin;
+  const redirectTo = `${origin}/auth/callback`;
+
   const { error } = await admin.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: "https://fisayoview.vercel.app/auth/callback",
-      shouldCreateUser: true,
+      emailRedirectTo: redirectTo,
+      shouldCreateUser: true, // Whitelist above is the gate; Supabase creates account on first login
     },
   });
 

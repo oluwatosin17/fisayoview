@@ -99,7 +99,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
             Images
           </Link>
           <a
-            href={`/projects/${collection.slug}`}
+            href={`/projects/${collection.id}`}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-md px-3 py-2 text-xs transition-colors"
