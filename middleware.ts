@@ -13,6 +13,7 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
+          // Forward any refreshed auth cookies onto both request + response
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
@@ -25,32 +26,27 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  // getUser() verifies the JWT with Supabase — more reliable than getSession()
+  const { data: { user } } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
 
-  // Allow login page through
   if (pathname === "/admin/login") {
-    // If already authenticated, redirect to dashboard
-    if (session) {
+    if (user) {
       return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
     return supabaseResponse;
   }
 
-  // /admin root → redirect appropriately
   if (pathname === "/admin") {
-    if (session) {
+    if (user) {
       return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
     return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 
-  // All other /admin/* routes require a session
   if (pathname.startsWith("/admin/")) {
-    if (!session) {
+    if (!user) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
   }
