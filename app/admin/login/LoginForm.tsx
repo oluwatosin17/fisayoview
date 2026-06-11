@@ -4,28 +4,25 @@ import Image from "next/image";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-type Status = "idle" | "loading" | "done" | "error";
+type Status = "idle" | "loading" | "sent" | "error";
 
 export default function LoginForm() {
   const searchParams = useSearchParams();
   const callbackError = searchParams.get("error");
 
-  const [email, setEmail]     = useState("");
-  const [status, setStatus]   = useState<Status>("idle");
+  const [email, setEmail]       = useState("");
+  const [status, setStatus]     = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState(
     callbackError === "auth_callback_failed"
-      ? "Link expired or already used — generate a new one."
+      ? "Link expired — request a new one below."
       : ""
   );
-  const [loginLink, setLoginLink] = useState("");
-  const [emailSent, setEmailSent] = useState(false);
+  const [provider, setProvider] = useState<"resend" | "supabase" | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("loading");
     setErrorMsg("");
-    setLoginLink("");
-    setEmailSent(false);
 
     try {
       const res = await fetch("/api/admin/auth/send-magic-link", {
@@ -41,9 +38,8 @@ export default function LoginForm() {
         return;
       }
 
-      setLoginLink(data.link);
-      setEmailSent(data.emailSent ?? false);
-      setStatus("done");
+      setProvider(data.provider ?? "supabase");
+      setStatus("sent");
     } catch {
       setErrorMsg("Network error. Please try again.");
       setStatus("error");
@@ -51,9 +47,14 @@ export default function LoginForm() {
   }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", alignItems: "center", justifyContent: "center", padding: "16px", background: "#0a0a0a" }}>
-      <div style={{ background: "#111", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "32px", width: "100%", maxWidth: "360px" }}>
-
+    <div style={{
+      display: "flex", minHeight: "100vh", alignItems: "center",
+      justifyContent: "center", padding: "16px", background: "#0a0a0a"
+    }}>
+      <div style={{
+        background: "#111", border: "1px solid #1a1a1a",
+        borderRadius: "16px", padding: "32px", width: "100%", maxWidth: "360px"
+      }}>
         {/* Logo */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", marginBottom: "32px" }}>
           <div style={{ background: "#fff", width: 52, height: 52, borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -65,44 +66,53 @@ export default function LoginForm() {
           </div>
         </div>
 
-        {/* ── Done state: always show the sign-in button ── */}
-        {status === "done" && loginLink && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        {/* ── Sent state ── */}
+        {status === "sent" && (
+          <div style={{ textAlign: "center" }}>
+            <div style={{
+              width: 48, height: 48, borderRadius: "50%",
+              background: "#22c55e22", color: "#22c55e",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "20px", margin: "0 auto 16px"
+            }}>✓</div>
 
-            {/* Primary: click to sign in */}
-            <a
-              href={loginLink}
-              style={{ display: "block", background: "#fff", color: "#000", textDecoration: "none", padding: "14px 0", borderRadius: "8px", fontSize: "14px", fontWeight: 600, textAlign: "center" }}
-            >
-              Sign in to Admin →
-            </a>
+            <p style={{ color: "#fff", fontWeight: 500, margin: "0 0 8px", fontSize: "15px" }}>
+              Check your email
+            </p>
+            <p style={{ color: "#808080", fontSize: "13px", lineHeight: 1.6, margin: "0 0 20px" }}>
+              We sent a sign-in link to<br />
+              <strong style={{ color: "#fff" }}>{email}</strong>
+            </p>
 
-            {/* Secondary: email status */}
-            <div style={{ background: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: "8px", padding: "12px 14px" }}>
-              {emailSent ? (
-                <p style={{ margin: 0, fontSize: "12px", color: "#808080", lineHeight: 1.6 }}>
-                  ✓ A sign-in link was also sent to <strong style={{ color: "#fff" }}>{email}</strong>
-                  <br />
-                  <span style={{ color: "#555" }}>Check spam / Promotions if you don&apos;t see it.</span>
+            {/* Supabase email warning */}
+            {provider === "supabase" && (
+              <div style={{
+                background: "#f59e0b11", border: "1px solid #f59e0b33",
+                borderRadius: "8px", padding: "12px 14px", marginBottom: "20px", textAlign: "left"
+              }}>
+                <p style={{ margin: "0 0 6px", fontSize: "12px", color: "#f59e0b", fontWeight: 500 }}>
+                  ⚠ Check your Spam folder
                 </p>
-              ) : (
-                <p style={{ margin: 0, fontSize: "12px", color: "#555", lineHeight: 1.6 }}>
-                  No email sent — use the button above to sign in directly.
+                <p style={{ margin: 0, fontSize: "12px", color: "#808080", lineHeight: 1.5 }}>
+                  Gmail often filters Supabase emails. Look in
+                  <strong style={{ color: "#fff" }}> Spam</strong> or the
+                  <strong style={{ color: "#fff" }}> Promotions</strong> tab.<br /><br />
+                  Search for: <code style={{ color: "#fff", fontSize: "11px" }}>from:noreply@mail.supabase.io</code>
                 </p>
-              )}
-            </div>
+              </div>
+            )}
 
             <button
-              onClick={() => { setStatus("idle"); setLoginLink(""); }}
-              style={{ color: "#555", fontSize: "12px", background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "center" }}
+              onClick={() => { setStatus("idle"); setProvider(null); }}
+              style={{ color: "#555", fontSize: "12px", background: "none", border: "none", cursor: "pointer", padding: 0 }}
             >
-              Use a different email
+              Try a different email
             </button>
           </div>
         )}
 
         {/* ── Form ── */}
-        {status !== "done" && (
+        {status !== "sent" && (
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
               <label htmlFor="email" style={{ display: "block", color: "#808080", fontSize: "12px", fontWeight: 500, marginBottom: "8px" }}>
@@ -112,23 +122,36 @@ export default function LoginForm() {
                 id="email" type="email" required
                 value={email} onChange={(e) => setEmail(e.target.value)}
                 placeholder="bookfisayoview@gmail.com"
-                style={{ width: "100%", background: "#0a0a0a", border: "1px solid #1a1a1a", color: "#fff", borderRadius: "8px", padding: "12px 14px", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
+                style={{
+                  width: "100%", background: "#0a0a0a", border: "1px solid #1a1a1a",
+                  color: "#fff", borderRadius: "8px", padding: "12px 14px",
+                  fontSize: "14px", outline: "none", boxSizing: "border-box"
+                }}
                 onFocus={(e) => { e.currentTarget.style.borderColor = "#333"; }}
                 onBlur={(e)  => { e.currentTarget.style.borderColor = "#1a1a1a"; }}
               />
             </div>
 
             {(status === "error" || errorMsg) && (
-              <p style={{ background: "#ef444411", color: "#ef4444", border: "1px solid #ef444433", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", margin: 0 }}>
+              <p style={{
+                background: "#ef444411", color: "#ef4444",
+                border: "1px solid #ef444433", borderRadius: "8px",
+                padding: "10px 12px", fontSize: "13px", margin: 0
+              }}>
                 {errorMsg}
               </p>
             )}
 
             <button
               type="submit" disabled={status === "loading"}
-              style={{ width: "100%", background: "#fff", color: "#000", border: "none", borderRadius: "8px", padding: "13px 0", fontSize: "14px", fontWeight: 600, cursor: "pointer", opacity: status === "loading" ? 0.7 : 1 }}
+              style={{
+                width: "100%", background: "#fff", color: "#000", border: "none",
+                borderRadius: "8px", padding: "13px 0", fontSize: "14px",
+                fontWeight: 600, cursor: "pointer",
+                opacity: status === "loading" ? 0.7 : 1
+              }}
             >
-              {status === "loading" ? "Generating link…" : "Get login link"}
+              {status === "loading" ? "Sending…" : "Send login link"}
             </button>
           </form>
         )}
