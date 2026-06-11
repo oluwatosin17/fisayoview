@@ -18,17 +18,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   // 'revealed' → preloader done, page fades in
   const [state, setState] = useState<"loading" | "revealed">("loading");
 
-  useEffect(() => {
-    // Only show preloader once per session
-    if (typeof sessionStorage !== "undefined" && sessionStorage.getItem("fv_loaded")) {
-      setState("revealed");
-    }
-  }, []);
-
   function handlePreloaderComplete() {
-    if (typeof sessionStorage !== "undefined") {
-      sessionStorage.setItem("fv_loaded", "1");
-    }
     setState("revealed");
   }
 
