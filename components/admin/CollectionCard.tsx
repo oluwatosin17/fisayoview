@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { DbCollection } from "@/lib/supabase";
-import { cdnUrl } from "@/lib/cloudinary";
+import { cdnUrl } from "@/lib/cdn-url";
 
 interface CollectionCardProps {
   collection: DbCollection & {

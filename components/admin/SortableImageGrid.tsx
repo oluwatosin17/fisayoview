@@ -17,7 +17,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import Image from "next/image";
 import type { DbImage } from "@/lib/supabase";
-import { cdnUrl } from "@/lib/cloudinary";
+import { cdnUrl } from "@/lib/cdn-url";
 
 interface SortableImageGridProps {
   images: DbImage[];
