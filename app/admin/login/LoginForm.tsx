@@ -7,18 +7,21 @@ import { useSearchParams } from "next/navigation";
 export default function LoginForm() {
   const searchParams = useSearchParams();
   const callbackError = searchParams.get("error");
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const [email, setEmail]   = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState(
     callbackError === "auth_callback_failed"
-      ? "Magic link expired or invalid. Please try again."
+      ? "Link expired or already used — generate a new one below."
       : ""
   );
+  const [loginLink, setLoginLink] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("loading");
     setErrorMsg("");
+    setLoginLink("");
 
     try {
       const res = await fetch("/api/admin/auth/send-magic-link", {
@@ -26,14 +29,14 @@ export default function LoginForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase() }),
       });
-
       const data = await res.json();
       if (!res.ok) {
         setErrorMsg(data.error ?? "Something went wrong");
         setStatus("error");
         return;
       }
-      setStatus("success");
+      setLoginLink(data.link);
+      setStatus("ready");
     } catch {
       setErrorMsg("Network error. Please try again.");
       setStatus("error");
@@ -43,39 +46,42 @@ export default function LoginForm() {
   return (
     <div className="flex min-h-screen items-center justify-center px-4" style={{ background: "#0a0a0a" }}>
       <div className="w-full max-w-sm rounded-2xl p-8" style={{ background: "#111", border: "1px solid #1a1a1a" }}>
+
         {/* Logo */}
         <div className="flex flex-col items-center gap-4 mb-8">
           <div className="flex items-center justify-center rounded-xl" style={{ background: "#fff", width: 52, height: 52 }}>
             <Image src="/logo-black.png" alt="FV" width={36} height={36} style={{ objectFit: "contain" }} />
           </div>
           <div className="text-center">
-            <p className="tracking-widest text-xs font-semibold" style={{ color: "#fff", letterSpacing: "0.2em" }}>
-              FISAYOVIEW
-            </p>
+            <p className="tracking-widest text-xs font-semibold" style={{ color: "#fff", letterSpacing: "0.2em" }}>FISAYOVIEW</p>
             <p className="text-xs mt-1" style={{ color: "#808080" }}>Admin Panel</p>
           </div>
         </div>
 
-        {status === "success" ? (
-          <div className="text-center py-4">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl"
-              style={{ background: "#22c55e22", color: "#22c55e" }}>✓</div>
-            <p className="font-medium mb-2" style={{ color: "#fff" }}>Check your email</p>
-            <p className="text-sm" style={{ color: "#808080" }}>
-              We sent a magic link to <strong style={{ color: "#fff" }}>{email}</strong>. Click it to sign in.
-            </p>
+        {/* Link ready */}
+        {status === "ready" && loginLink ? (
+          <div className="flex flex-col items-center gap-5 py-4 text-center">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center text-xl" style={{ background: "#22c55e22", color: "#22c55e" }}>✓</div>
+            <div>
+              <p className="font-medium mb-1" style={{ color: "#fff" }}>Your login link is ready</p>
+              <p className="text-xs" style={{ color: "#808080" }}>
+                Click below to sign in as <strong style={{ color: "#fff" }}>{email}</strong>
+              </p>
+            </div>
+            <a href={loginLink} className="w-full rounded-lg py-3 text-sm font-semibold text-center block" style={{ background: "#fff", color: "#000" }}>
+              Sign in to Admin →
+            </a>
+            <button onClick={() => { setStatus("idle"); setLoginLink(""); }} className="text-xs cursor-pointer" style={{ color: "#808080" }}>
+              Use a different email
+            </button>
           </div>
         ) : (
+          /* Email form */
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <label htmlFor="email" className="block text-xs mb-2 font-medium" style={{ color: "#808080" }}>
-                Email address
-              </label>
+              <label htmlFor="email" className="block text-xs mb-2 font-medium" style={{ color: "#808080" }}>Email address</label>
               <input
-                id="email"
-                type="email"
-                required
-                value={email}
+                id="email" type="email" required value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@example.com"
                 className="w-full rounded-lg px-4 py-3 text-sm outline-none"
@@ -86,19 +92,17 @@ export default function LoginForm() {
             </div>
 
             {(status === "error" || errorMsg) && (
-              <p className="text-xs rounded-lg px-3 py-2"
-                style={{ background: "#ef444411", color: "#ef4444", border: "1px solid #ef444433" }}>
+              <p className="text-xs rounded-lg px-3 py-2" style={{ background: "#ef444411", color: "#ef4444", border: "1px solid #ef444433" }}>
                 {errorMsg}
               </p>
             )}
 
             <button
-              type="submit"
-              disabled={status === "loading"}
+              type="submit" disabled={status === "loading"}
               className="w-full rounded-lg py-3 text-sm font-semibold cursor-pointer"
               style={{ background: "#fff", color: "#000", opacity: status === "loading" ? 0.7 : 1 }}
             >
-              {status === "loading" ? "Sending…" : "Send magic link"}
+              {status === "loading" ? "Generating link…" : "Get login link"}
             </button>
           </form>
         )}

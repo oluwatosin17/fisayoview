@@ -22,22 +22,26 @@ export async function POST(request: Request) {
   }
 
   const admin = supabaseAdmin();
-  // Dynamic redirect — works on both vercel.app and custom domains
   const origin = new URL(request.url).origin;
   const redirectTo = `${origin}/auth/callback`;
 
-  const { error } = await admin.auth.signInWithOtp({
+  // generateLink uses the service-role key — no per-user rate limits, always works.
+  // We return the link directly (safe for this private 2-person admin panel).
+  const { data, error } = await admin.auth.admin.generateLink({
+    type: "magiclink",
     email,
-    options: {
-      emailRedirectTo: redirectTo,
-      shouldCreateUser: true, // Whitelist above is the gate; Supabase creates account on first login
-    },
+    options: { redirectTo },
   });
 
   if (error) {
     console.error("[send-magic-link]", error.message);
-    return NextResponse.json({ error: "Failed to send magic link" }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ success: true });
+  const actionLink = data.properties?.action_link;
+  if (!actionLink) {
+    return NextResponse.json({ error: "Failed to generate link" }, { status: 500 });
+  }
+
+  return NextResponse.json({ link: actionLink });
 }
