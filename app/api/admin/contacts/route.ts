@@ -40,3 +40,33 @@ export async function GET(request: Request) {
 
   return NextResponse.json(result);
 }
+
+export async function POST(request: Request) {
+  const session = await requireSession();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const body = await request.json();
+  const { name, email, phone, whatsapp, event_type, message, notes, status } = body;
+
+  if (!name?.trim()) return NextResponse.json({ error: "Name is required" }, { status: 400 });
+
+  const admin = supabaseAdmin();
+  const { data, error } = await admin
+    .from("contact_submissions")
+    .insert({
+      name: name.trim(),
+      email: email?.trim() ?? "",
+      phone: phone?.trim() ?? "",
+      whatsapp: whatsapp?.trim() ?? null,
+      event_type: event_type?.trim() ?? null,
+      message: message?.trim() ?? "",
+      notes: notes?.trim() ?? null,
+      status: status ?? "NEW",
+      source: "manual",
+    })
+    .select()
+    .single();
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data, { status: 201 });
+}

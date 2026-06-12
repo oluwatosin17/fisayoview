@@ -34,8 +34,15 @@ export async function PATCH(
   const admin = supabaseAdmin();
 
   const update: Record<string, unknown> = {};
-  if ("status" in body) update.status = body.status;
-  if ("notes" in body) update.notes = body.notes;
+  if ("status"     in body) update.status     = body.status;
+  if ("notes"      in body) update.notes      = body.notes;
+  if ("name"       in body) update.name       = body.name;
+  if ("email"      in body) update.email      = body.email;
+  if ("phone"      in body) update.phone      = body.phone;
+  if ("whatsapp"   in body) update.whatsapp   = body.whatsapp;
+  if ("event_type" in body) update.event_type = body.event_type;
+  if ("message"    in body) update.message    = body.message;
+  if ("location"   in body) update.location   = body.location;
 
   const { data, error } = await admin
     .from("contact_submissions")
