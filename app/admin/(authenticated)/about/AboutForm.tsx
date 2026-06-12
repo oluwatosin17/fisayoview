@@ -133,7 +133,7 @@ export function AboutForm({ initialData }: { initialData: SiteSettings | null })
 
       {/* Portrait gallery */}
       <div style={section}>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "20px" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "16px" }}>
           <div>
             <p style={{ ...lbl, margin: "0 0 4px" }}>Portrait Gallery</p>
             <p style={{ fontSize: "12px", color: "#444", margin: 0 }}>
@@ -162,7 +162,7 @@ export function AboutForm({ initialData }: { initialData: SiteSettings | null })
         ) : (
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={portraits.map((p) => p.cloudinary_public_id)} strategy={horizontalListSortingStrategy}>
-              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
                 {portraits.map((p) => <SortablePortrait key={p.cloudinary_public_id} portrait={p} onDelete={deletePortrait} />)}
               </div>
             </SortableContext>
@@ -173,12 +173,12 @@ export function AboutForm({ initialData }: { initialData: SiteSettings | null })
       {/* Bio fields */}
       <div style={section}>
         <p style={{ ...lbl, margin: "0 0 20px" }}>Biography</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <label style={lbl}>Heading</label>
             <input value={heading} onChange={(e) => setHeading(e.target.value)} style={inp} placeholder="FISAYOVIEW" />
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "8px" }}>
             <label style={lbl}>Biography Text</label>
             <textarea value={text} onChange={(e) => setText(e.target.value)} rows={8} style={{ ...inp, resize: "vertical" }} placeholder="Tell your story…" />
           </div>
@@ -188,7 +188,7 @@ export function AboutForm({ initialData }: { initialData: SiteSettings | null })
       {/* Contact details */}
       <div style={section}>
         <p style={{ ...lbl, margin: "0 0 20px" }}>Contact Details</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <label style={lbl}>Instagram URL</label>
             <input value={instagram} onChange={(e) => setInstagram(e.target.value)} style={inp} placeholder="https://instagram.com/fisayoview" />

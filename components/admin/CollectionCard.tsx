@@ -63,7 +63,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
       </div>
 
       {/* Content */}
-      <div style={{ padding: "20px 20px 16px", display: "flex", flexDirection: "column", gap: "12px", flex: 1 }}>
+      <div style={{ padding: "16px", display: "flex", flexDirection: "column", gap: "12px", flex: 1 }}>
         {/* Name + category */}
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px" }}>
           <h3 style={{ fontSize: "15px", fontWeight: 600, color: "#fff", margin: 0, lineHeight: 1.3, letterSpacing: "-0.01em" }}>
@@ -84,10 +84,10 @@ export function CollectionCard({ collection }: CollectionCardProps) {
         </p>
 
         {/* Action buttons */}
-        <div style={{ display: "flex", gap: "8px", marginTop: "auto" }}>
+        <div style={{ display: "flex", gap: "8px", marginTop: "auto", justifyContent: "flex-end" }}>
           <Link href={`/admin/collections/${collection.id}`}
             style={{
-              flex: 1, textAlign: "center", padding: "9px 0",
+              flex: 1, textAlign: "center", padding: "8px 12px",
               borderRadius: "8px", fontSize: "13px", fontWeight: 500,
               background: "#1a1a1a", color: "#fff", border: "1px solid #2a2a2a",
               textDecoration: "none", transition: "background 0.15s",
@@ -96,7 +96,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
           </Link>
           <Link href={`/admin/collections/${collection.id}/images`}
             style={{
-              flex: 1, textAlign: "center", padding: "9px 0",
+              flex: 1, textAlign: "center", padding: "8px 12px",
               borderRadius: "8px", fontSize: "13px", fontWeight: 500,
               background: "#1a1a1a", color: "#888", border: "1px solid #1e1e1e",
               textDecoration: "none",
@@ -105,7 +105,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
           </Link>
           <a href={`/projects/${collection.id}`} target="_blank" rel="noopener noreferrer"
             style={{
-              padding: "9px 14px",
+              padding: "8px 12px",
               borderRadius: "8px", fontSize: "14px",
               background: "#1a1a1a", color: "#666", border: "1px solid #1e1e1e",
               textDecoration: "none", lineHeight: 1,

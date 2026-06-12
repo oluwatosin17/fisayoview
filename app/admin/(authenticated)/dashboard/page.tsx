@@ -74,7 +74,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stat cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "24px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "20px", marginBottom: "32px" }}>
         <StatCard label="Collections" value={stats.totalCollections} icon="◫" accent="#fff" />
         <StatCard label="Images" value={stats.totalImages} icon="⬡" accent="#a78bfa" />
         <StatCard label="Categories" value={stats.totalCats} icon="⊞" accent="#f59e0b" />
@@ -82,14 +82,14 @@ export default async function DashboardPage() {
       </div>
 
       {/* Two-column main content */}
-      <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: "16px", marginBottom: "16px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: "20px", marginBottom: "32px" }}>
 
         {/* Categories breakdown */}
-        <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "24px" }}>
-          <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#444", margin: "0 0 20px" }}>
+        <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "20px" }}>
+          <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#444", margin: "0 0 16px" }}>
             By Category
           </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {Object.entries(stats.catBreakdown).sort(([, a], [, b]) => b - a).map(([cat, count]) => {
               const color = CAT_COLORS[cat] ?? "#666";
               const pct = Math.round((count / maxCat) * 100);
@@ -110,7 +110,7 @@ export default async function DashboardPage() {
 
         {/* Recent collections */}
         <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", overflow: "hidden" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: "1px solid #111" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", borderBottom: "1px solid #111" }}>
             <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#444", margin: 0 }}>Recent Collections</p>
             <Link href="/admin/collections" style={{ fontSize: "12px", color: "#444", textDecoration: "none" }}>View all →</Link>
           </div>
@@ -119,7 +119,7 @@ export default async function DashboardPage() {
               const color = CAT_COLORS[col.category] ?? "#666";
               return (
                 <Link key={col.id} href={`/admin/collections/${col.id}/images`}
-                  className="hover:bg-[#111] transition-colors" style={{ display: "flex", alignItems: "center", gap: "14px", padding: "16px 24px", borderBottom: i < stats.recentCollections.length - 1 ? "1px solid #111" : "none", textDecoration: "none" }}>
+                  className="hover:bg-[#111] transition-colors" style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px 20px", borderBottom: i < stats.recentCollections.length - 1 ? "1px solid #111" : "none", textDecoration: "none" }}>
                   <div style={{ width: 36, height: 36, borderRadius: "6px", overflow: "hidden", background: "#1a1a1a", flexShrink: 0 }}>
                     {col.cover_url
                       ? <Image src={col.cover_url} alt={col.name} width={36} height={36} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
@@ -143,7 +143,7 @@ export default async function DashboardPage() {
 
       {/* Featured collections strip */}
       {stats.featuredCollections.length > 0 && (
-        <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "24px", marginBottom: "16px" }}>
+        <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "24px", marginBottom: "32px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
             <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#444", margin: 0 }}>Featured on Homepage</p>
             <Link href="/admin/homepage" style={{ fontSize: "12px", color: "#444", textDecoration: "none", padding: "6px 12px", border: "1px solid #1a1a1a", borderRadius: "8px" }}>Manage →</Link>
@@ -165,8 +165,8 @@ export default async function DashboardPage() {
       )}
 
       {/* Recent enquiries */}
-      <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", overflow: "hidden", marginBottom: "16px" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: "1px solid #111" }}>
+      <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", overflow: "hidden", marginBottom: "32px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", borderBottom: "1px solid #111" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#444", margin: 0 }}>Recent Enquiries</p>
             {stats.newContacts > 0 && (
@@ -184,7 +184,7 @@ export default async function DashboardPage() {
             const color = CONTACT_STATUS_COLORS[c.status] ?? "#60a5fa";
             return (
               <Link key={c.id} href={`/admin/contacts/${c.id}`}
-                className="hover:bg-[#111] transition-colors" style={{ display: "flex", alignItems: "center", gap: "12px", padding: "16px 24px", borderBottom: i < stats.recentContacts.length - 1 ? "1px solid #111" : "none", textDecoration: "none" }}>
+                className="hover:bg-[#111] transition-colors" style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px 20px", borderBottom: i < stats.recentContacts.length - 1 ? "1px solid #111" : "none", textDecoration: "none" }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ fontSize: "13px", fontWeight: 500, color: "#fff", margin: 0 }}>{c.name}</p>
                   <p style={{ fontSize: "12px", color: "#444", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.email}</p>
@@ -223,8 +223,8 @@ export default async function DashboardPage() {
 
 function StatCard({ label, value, icon, accent }: { label: string; value: number; icon: string; accent: string }) {
   return (
-    <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "24px" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+    <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "20px 24px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
         <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#444", margin: 0 }}>{label}</p>
         <span style={{ fontSize: "15px", color: accent, opacity: 0.6 }}>{icon}</span>
       </div>

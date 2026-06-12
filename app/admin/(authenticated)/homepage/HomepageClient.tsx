@@ -48,7 +48,8 @@ function SortableRow({ col, onToggleFeatured }: { col: Collection; onToggleFeatu
         display: "flex",
         alignItems: "center",
         gap: "16px",
-        padding: "16px 24px",
+        minHeight: "56px",
+        padding: "12px 20px",
         borderBottom: "1px solid #111",
       }}
     >
@@ -77,7 +78,7 @@ function SortableRow({ col, onToggleFeatured }: { col: Collection; onToggleFeatu
       {/* Featured toggle */}
       <button type="button" onClick={() => onToggleFeatured(col.id, !col.featured)}
         style={{
-          padding: "8px 16px", borderRadius: "8px", fontSize: "12px", fontWeight: 600, cursor: "pointer", flexShrink: 0,
+          padding: "6px 12px", borderRadius: "8px", fontSize: "12px", fontWeight: 600, cursor: "pointer", flexShrink: 0,
           background: col.featured ? "#ffffff12" : "transparent",
           color: col.featured ? "#fff" : "#383838",
           border: `1px solid ${col.featured ? "#2a2a2a" : "#1a1a1a"}`,
@@ -145,7 +146,7 @@ export default function HomepageClient({ initialCollections }: { initialCollecti
         background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px",
         padding: "20px 28px", marginBottom: "24px", gap: "16px", flexWrap: "wrap",
       }}>
-        <div style={{ display: "flex", gap: "40px" }}>
+        <div style={{ display: "flex", gap: "32px" }}>
           {[
             { label: "Total", value: collections.length, color: "#fff" },
             { label: "Featured", value: featuredCount, color: "#f59e0b" },
@@ -164,13 +165,13 @@ export default function HomepageClient({ initialCollections }: { initialCollecti
       </div>
 
       {/* Hint */}
-      <p style={{ fontSize: "12px", color: "#383838", marginBottom: "16px" }}>
+      <p style={{ fontSize: "12px", color: "#383838", marginBottom: "24px" }}>
         Drag to reorder · Toggle ★ Featured to control homepage visibility · Save when done
       </p>
 
       {/* List */}
       <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", overflow: "hidden" }}>
-        <div style={{ padding: "12px 24px", borderBottom: "1px solid #111", background: "#080808", display: "flex", alignItems: "center", gap: "16px" }}>
+        <div style={{ padding: "12px 20px", borderBottom: "1px solid #111", background: "#080808", display: "flex", alignItems: "center", gap: "16px" }}>
           <span style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#383838" }}>All collections — drag to reorder</span>
         </div>
 
