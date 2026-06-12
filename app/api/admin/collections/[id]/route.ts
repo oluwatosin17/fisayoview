@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabase";
 import { createSupabaseServerClient } from "@/lib/admin/supabase-server";
 
@@ -19,7 +20,6 @@ export async function PATCH(
   const body = await request.json();
   const admin = supabaseAdmin();
 
-  // Build update object from only the keys present in the body
   const updateData: Record<string, unknown> = {};
   if ("name" in body) updateData.name = body.name;
   if ("slug" in body) updateData.slug = body.slug;
@@ -38,6 +38,10 @@ export async function PATCH(
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  revalidatePath("/");
+  revalidatePath(`/projects/${id}`);
+  revalidatePath("/admin/collections");
   return NextResponse.json(data);
 }
 
@@ -51,11 +55,10 @@ export async function DELETE(
   const { id } = await params;
   const admin = supabaseAdmin();
 
-  const { error } = await admin
-    .from("collections")
-    .delete()
-    .eq("id", Number(id));
-
+  const { error } = await admin.from("collections").delete().eq("id", Number(id));
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  revalidatePath("/");
+  revalidatePath("/admin/collections");
   return NextResponse.json({ success: true });
 }

@@ -32,7 +32,7 @@ export default async function CollectionsPage() {
   const collections = await getCollections();
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div style={{ padding: "48px 56px", maxWidth: "1100px", margin: "0 auto" }}>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-semibold mb-1" style={{ color: "#fff" }}>

@@ -52,7 +52,11 @@ WHERE (about_portraits IS NULL OR about_portraits = '[]'::jsonb);
 -- 5. Mark first 6 collections as featured (homepage showcase)
 UPDATE collections SET featured = true WHERE display_order <= 6;
 
--- 6. Grant RLS access for service role (admin key bypasses RLS anyway, this is for anon reads)
+-- 6. Fix sequences after manual ID inserts (prevents "duplicate key" on new collections/images)
+SELECT setval(pg_get_serial_sequence('collections', 'id'), (SELECT MAX(id) FROM collections));
+SELECT setval(pg_get_serial_sequence('images', 'id'), (SELECT MAX(id) FROM images));
+
+-- 7. Grant RLS access for service role (admin key bypasses RLS anyway, this is for anon reads)
 -- Public can read site_settings
 DO $$
 BEGIN

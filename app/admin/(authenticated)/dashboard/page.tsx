@@ -64,7 +64,7 @@ export default async function DashboardPage() {
   const maxCatCount = Math.max(...Object.values(stats.categoryBreakdown), 1);
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div style={{ padding: "48px 56px", maxWidth: "1200px", margin: "0 auto" }}>
       {/* Header */}
       <div className="mb-10">
         <h1 className="text-3xl font-semibold tracking-tight mb-1" style={{ color: "#fff", letterSpacing: "-0.02em" }}>

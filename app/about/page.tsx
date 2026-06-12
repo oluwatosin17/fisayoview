@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getSiteSettings } from "@/lib/data";
 import AboutPageClient from "./AboutPageClient";
 

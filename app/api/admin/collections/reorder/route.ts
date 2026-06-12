@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabase";
 import { createSupabaseServerClient } from "@/lib/admin/supabase-server";
 
@@ -24,5 +25,6 @@ export async function PATCH(request: Request) {
     )
   );
 
+  revalidatePath("/");
   return NextResponse.json({ ok: true });
 }

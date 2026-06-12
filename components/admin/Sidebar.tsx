@@ -26,57 +26,36 @@ export function Sidebar() {
   }
 
   return (
-    <aside
-      className="flex flex-col h-screen sticky top-0"
-      style={{
-        width: "220px",
-        minWidth: "220px",
-        background: "#0a0a0a",
-        borderRight: "1px solid #1a1a1a",
-      }}
-    >
+    <aside className="flex flex-col h-screen sticky top-0"
+      style={{ width: "240px", minWidth: "240px", background: "#080808", borderRight: "1px solid #161616" }}>
+
       {/* Logo */}
-      <div
-        className="flex items-center gap-3 px-5 py-6"
-        style={{ borderBottom: "1px solid #1a1a1a" }}
-      >
-        <div
-          className="flex items-center justify-center rounded"
-          style={{ background: "#fff", width: 32, height: 32, flexShrink: 0 }}
-        >
-          <Image
-            src="/logo-black.png"
-            alt="FV"
-            width={22}
-            height={22}
-            style={{ objectFit: "contain" }}
-          />
+      <div className="flex items-center gap-3" style={{ padding: "24px 20px 20px", borderBottom: "1px solid #161616" }}>
+        <div className="flex items-center justify-center rounded-lg" style={{ background: "#fff", width: 34, height: 34, flexShrink: 0 }}>
+          <Image src="/logo-black.png" alt="FV" width={22} height={22} style={{ objectFit: "contain" }} />
         </div>
-        <span
-          className="font-semibold tracking-widest text-xs"
-          style={{ color: "#fff", letterSpacing: "0.15em" }}
-        >
-          FISAYOVIEW
-        </span>
+        <div>
+          <p className="font-semibold tracking-widest" style={{ color: "#fff", fontSize: "11px", letterSpacing: "0.18em" }}>FISAYOVIEW</p>
+          <p style={{ color: "#444", fontSize: "10px", marginTop: "1px" }}>Admin Panel</p>
+        </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 py-4 overflow-y-auto">
-        <ul className="flex flex-col gap-1 px-3">
+      <nav className="flex-1 overflow-y-auto" style={{ padding: "12px 12px" }}>
+        <ul style={{ display: "flex", flexDirection: "column", gap: "2px", listStyle: "none", margin: 0, padding: 0 }}>
           {NAV_LINKS.map(({ href, label, icon }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
             return (
               <li key={href}>
-                <Link
-                  href={href}
-                  className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-colors"
-                  style={{
-                    background: active ? "#1a1a1a" : "transparent",
-                    color: active ? "#fff" : "#808080",
-                    textDecoration: "none",
-                  }}
-                >
-                  <span style={{ fontSize: "15px", opacity: 0.8 }}>{icon}</span>
+                <Link href={href} style={{
+                  display: "flex", alignItems: "center", gap: "10px",
+                  padding: "10px 12px", borderRadius: "8px",
+                  background: active ? "#151515" : "transparent",
+                  color: active ? "#fff" : "#555",
+                  textDecoration: "none", fontSize: "13px", fontWeight: active ? 500 : 400,
+                  transition: "color 0.15s, background 0.15s",
+                }}>
+                  <span style={{ fontSize: "14px", opacity: active ? 1 : 0.7, width: "16px", textAlign: "center" }}>{icon}</span>
                   {label}
                 </Link>
               </li>
@@ -86,21 +65,16 @@ export function Sidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="px-3 py-4" style={{ borderTop: "1px solid #1a1a1a" }}>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 w-full rounded-md px-3 py-2.5 text-sm transition-colors cursor-pointer"
-          style={{ color: "#808080", background: "transparent" }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = "#ef4444";
-            (e.currentTarget as HTMLButtonElement).style.background = "#1a0a0a";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = "#808080";
-            (e.currentTarget as HTMLButtonElement).style.background = "transparent";
-          }}
-        >
-          <span style={{ fontSize: "15px" }}>↩</span>
+      <div style={{ padding: "12px", borderTop: "1px solid #161616" }}>
+        <button onClick={handleLogout} style={{
+          display: "flex", alignItems: "center", gap: "10px", width: "100%",
+          padding: "10px 12px", borderRadius: "8px", background: "transparent",
+          color: "#444", border: "none", cursor: "pointer", fontSize: "13px",
+          transition: "color 0.15s, background 0.15s",
+        }}
+          onMouseEnter={(e) => { const b = e.currentTarget; b.style.color = "#ef4444"; b.style.background = "#1a0a0a"; }}
+          onMouseLeave={(e) => { const b = e.currentTarget; b.style.color = "#444"; b.style.background = "transparent"; }}>
+          <span style={{ fontSize: "14px", width: "16px", textAlign: "center" }}>↩</span>
           Logout
         </button>
       </div>
