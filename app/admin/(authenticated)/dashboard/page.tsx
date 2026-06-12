@@ -21,12 +21,13 @@ const CATEGORY_COLORS: Record<string, string> = {
 async function getStats() {
   const admin = supabaseAdmin();
 
-  const [collectionsRes, imagesRes, recentRes, featuredRes, settingsRes] = await Promise.all([
+  const [collectionsRes, imagesRes, recentRes, featuredRes, settingsRes, contactsRes] = await Promise.all([
     admin.from("collections").select("id, category"),
     admin.from("images").select("id", { count: "exact", head: true }),
     admin.from("collections").select("*, images(count)").order("id", { ascending: false }).limit(8),
     admin.from("collections").select("id,name,cover_url,category").eq("featured", true).order("display_order").limit(6),
     admin.from("site_settings").select("id,about_heading,about_text,instagram_url,email,about_portraits").limit(1).single(),
+    admin.from("contact_submissions").select("id,name,email,status,created_at").order("created_at", { ascending: false }).limit(5),
   ]);
 
   const collections = collectionsRes.data ?? [];
@@ -46,6 +47,8 @@ async function getStats() {
   }));
 
   const portraits = settingsRes.data?.about_portraits ?? [];
+  const contacts = contactsRes.data ?? [];
+  const newContacts = contacts.filter((c: { status: string }) => c.status === "NEW").length;
 
   return {
     totalCollections: collections.length,
@@ -55,6 +58,8 @@ async function getStats() {
     featuredCollections: featuredRes.data ?? [],
     cmsConfigured: !!(settingsRes.data?.about_text),
     portraitCount: Array.isArray(portraits) ? portraits.length : 0,
+    recentContacts: contacts,
+    newContacts,
   };
 }
 
@@ -172,6 +177,44 @@ export default async function DashboardPage() {
         </div>
       )}
 
+      {/* Recent enquiries */}
+      <div className="rounded-2xl mt-6" style={{ background: "#111", border: "1px solid #1a1a1a" }}>
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid #1a1a1a" }}>
+          <div className="flex items-center gap-3">
+            <h2 className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#555" }}>Recent Enquiries</h2>
+            {stats.newContacts > 0 && (
+              <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={{ background: "#3b82f622", color: "#60a5fa" }}>
+                {stats.newContacts} new
+              </span>
+            )}
+          </div>
+          <Link href="/admin/contacts" className="text-xs" style={{ color: "#555" }}>View all →</Link>
+        </div>
+        {stats.recentContacts.length === 0 ? (
+          <div className="px-6 py-8 text-center text-sm" style={{ color: "#444" }}>No enquiries yet</div>
+        ) : (
+          <ul>
+            {stats.recentContacts.map((c: { id: number; name: string; email: string; status: string; created_at: string }, i: number) => {
+              const stColors: Record<string, string> = { NEW: "#60a5fa", CONTACTED: "#fbbf24", IN_PROGRESS: "#c4b5fd", BOOKED: "#4ade80", CLOSED: "#9ca3af" };
+              const color = stColors[c.status] ?? "#60a5fa";
+              return (
+                <li key={c.id} style={{ borderBottom: i < stats.recentContacts.length - 1 ? "1px solid #1a1a1a" : "none" }}>
+                  <Link href={`/admin/contacts/${c.id}`} className="flex items-center gap-3 px-6 py-3" style={{ textDecoration: "none" }}>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate" style={{ color: "#fff" }}>{c.name}</p>
+                      <p className="text-xs truncate" style={{ color: "#444" }}>{c.email}</p>
+                    </div>
+                    <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: `${color}22`, color }}>
+                      {c.status.replace("_", " ")}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+
       {/* Quick actions */}
       <div className="flex flex-wrap gap-3 mt-8">
         <Link href="/admin/collections/new"
@@ -188,6 +231,11 @@ export default async function DashboardPage() {
           className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium"
           style={{ background: "#1a1a1a", color: "#fff", border: "1px solid #252525" }}>
           Edit About
+        </Link>
+        <Link href="/admin/contacts"
+          className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium"
+          style={{ background: "#1a1a1a", color: "#fff", border: "1px solid #252525" }}>
+          Contacts {stats.newContacts > 0 && <span style={{ background: "#3b82f644", color: "#60a5fa", fontSize: "11px", padding: "1px 7px", borderRadius: "999px" }}>{stats.newContacts}</span>}
         </Link>
         <a href="/" target="_blank" rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium"

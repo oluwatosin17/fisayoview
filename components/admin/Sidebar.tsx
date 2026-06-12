@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: "/admin/homepage", label: "Homepage", icon: "⬡" },
   { href: "/admin/about", label: "About", icon: "◉" },
   { href: "/admin/seo", label: "SEO", icon: "⌖" },
+  { href: "/admin/contacts", label: "Contacts", icon: "✉" },
   { href: "/admin/settings", label: "Settings", icon: "⚙" },
 ] as const;
 
