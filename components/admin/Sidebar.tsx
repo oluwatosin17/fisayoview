@@ -8,6 +8,7 @@ import { createSupabaseBrowserClient } from "@/lib/admin/supabase-browser";
 const NAV_LINKS = [
   { href: "/admin/dashboard", label: "Dashboard", icon: "⊞" },
   { href: "/admin/collections", label: "Collections", icon: "◫" },
+  { href: "/admin/homepage", label: "Homepage", icon: "⬡" },
   { href: "/admin/about", label: "About", icon: "◉" },
   { href: "/admin/seo", label: "SEO", icon: "⌖" },
   { href: "/admin/settings", label: "Settings", icon: "⚙" },

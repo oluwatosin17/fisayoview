@@ -13,11 +13,11 @@ export default async function AboutPage() {
   return (
     <div className="p-8 max-w-3xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold mb-1" style={{ color: "#fff" }}>
+        <h1 className="text-2xl font-semibold mb-1" style={{ color: "#fff", letterSpacing: "-0.02em" }}>
           About
         </h1>
-        <p className="text-sm" style={{ color: "#808080" }}>
-          Edit your biography and contact details
+        <p className="text-sm" style={{ color: "#555" }}>
+          Edit your biography, portrait gallery, and contact details
         </p>
       </div>
       <AboutForm initialData={settings} />
