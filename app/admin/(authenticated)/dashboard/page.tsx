@@ -81,7 +81,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Hero stats row */}
-      <div className="grid grid-cols-2 gap-4 mb-6 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-5 mb-8 md:grid-cols-4">
         <StatCard label="Collections" value={stats.totalCollections} suffix="" icon="◫" accent="#fff" />
         <StatCard label="Total Images" value={stats.totalImages} suffix="" icon="⬡" accent="#a78bfa" />
         <StatCard label="Categories" value={totalCats} suffix="" icon="⊞" accent="#f59e0b" />
@@ -249,12 +249,12 @@ export default async function DashboardPage() {
 
 function StatCard({ label, value, icon, accent }: { label: string; value: number; suffix: string; icon: string; accent: string }) {
   return (
-    <div className="rounded-2xl p-5 flex flex-col gap-3" style={{ background: "#111", border: "1px solid #1a1a1a" }}>
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-medium uppercase tracking-widest" style={{ color: "#555" }}>{label}</p>
-        <span style={{ fontSize: "16px", color: accent, opacity: 0.8 }}>{icon}</span>
+    <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "24px 22px", display: "flex", flexDirection: "column", gap: "16px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#555", margin: 0 }}>{label}</p>
+        <span style={{ fontSize: "16px", color: accent, opacity: 0.7 }}>{icon}</span>
       </div>
-      <p className="text-3xl font-semibold tracking-tight" style={{ color: accent, letterSpacing: "-0.03em" }}>
+      <p style={{ fontSize: "36px", fontWeight: 600, color: accent, letterSpacing: "-0.03em", margin: 0, lineHeight: 1 }}>
         {value.toLocaleString()}
       </p>
     </div>

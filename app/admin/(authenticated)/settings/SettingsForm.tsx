@@ -10,6 +10,24 @@ interface SiteSettings {
   about_heading?: string | null;
 }
 
+const inp: React.CSSProperties = {
+  background: "#0d0d0d",
+  border: "1px solid #222",
+  color: "#fff",
+  borderRadius: "10px",
+  padding: "12px 16px",
+  fontSize: "14px",
+  width: "100%",
+  outline: "none",
+};
+const lbl: React.CSSProperties = {
+  color: "#555",
+  fontSize: "11px",
+  fontWeight: 600,
+  textTransform: "uppercase",
+  letterSpacing: "0.08em",
+};
+
 export function SettingsForm({ initialData }: { initialData: SiteSettings | null }) {
   const toast = useToast();
   const [isPending, startTransition] = useTransition();
@@ -36,38 +54,30 @@ export function SettingsForm({ initialData }: { initialData: SiteSettings | null
     });
   }
 
-  const inputStyle = {
-    background: "#0a0a0a",
-    border: "1px solid #1a1a1a",
-    color: "#fff",
-    borderRadius: "8px",
-    padding: "10px 14px",
-    fontSize: "14px",
-    width: "100%",
-    outline: "none",
-  };
-  const labelStyle = { color: "#808080", fontSize: "12px", fontWeight: 500 as const };
-
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6 max-w-2xl">
-      <div className="flex flex-col gap-2">
-        <label style={labelStyle}>About Section Heading</label>
-        <input value={heading} onChange={(e) => setHeading(e.target.value)} style={inputStyle} placeholder="About Fisayo" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label style={labelStyle}>Instagram URL</label>
-        <input value={instagram} onChange={(e) => setInstagram(e.target.value)} style={inputStyle} placeholder="https://instagram.com/fisayoview" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label style={labelStyle}>WhatsApp Number</label>
-        <input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} style={inputStyle} placeholder="+2348000000000" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label style={labelStyle}>Booking Email</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} placeholder="bookfisayoview@gmail.com" />
+    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "28px", maxWidth: "640px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <label style={lbl}>About Section Heading</label>
+        <input value={heading} onChange={(e) => setHeading(e.target.value)} style={inp} placeholder="FISAYOVIEW" />
       </div>
 
-      <button type="submit" disabled={isPending} className="rounded-lg px-5 py-2.5 text-sm font-semibold cursor-pointer self-start" style={{ background: "#fff", color: "#000", opacity: isPending ? 0.7 : 1 }}>
+      <hr style={{ border: "none", borderTop: "1px solid #1a1a1a" }} />
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <label style={lbl}>Instagram URL</label>
+        <input value={instagram} onChange={(e) => setInstagram(e.target.value)} style={inp} placeholder="https://instagram.com/fisayoview" />
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <label style={lbl}>WhatsApp Number</label>
+        <input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} style={inp} placeholder="+2348000000000" />
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <label style={lbl}>Booking Email</label>
+        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inp} placeholder="bookfisayoview@gmail.com" />
+      </div>
+
+      <button type="submit" disabled={isPending}
+        style={{ padding: "12px 28px", borderRadius: "10px", fontSize: "14px", fontWeight: 600, background: "#fff", color: "#000", border: "none", cursor: "pointer", opacity: isPending ? 0.7 : 1, alignSelf: "flex-start" }}>
         {isPending ? "Saving…" : "Save Settings"}
       </button>
     </form>

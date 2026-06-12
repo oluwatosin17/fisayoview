@@ -160,37 +160,31 @@ export function ImagesClient({
   return (
     <div className="flex flex-col gap-8">
       {/* Upload */}
-      <div className="rounded-2xl p-5" style={{ background: "#111", border: "1px solid #1a1a1a" }}>
-        <h2 className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#555" }}>Upload Images</h2>
+      <div style={{ borderRadius: "16px", padding: "24px", background: "#0d0d0d", border: "1px solid #1e1e1e" }}>
+        <h2 style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#555", marginBottom: "16px" }}>Upload Images</h2>
         <UploadDropzone folder={collectionSlug} onUploaded={handleUploaded} />
       </div>
 
       {/* Images */}
       <div>
         {/* Toolbar */}
-        <div className="flex items-center gap-3 mb-5 flex-wrap">
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", flexWrap: "wrap" }}>
           <button type="button" onClick={allSelected ? deselectAll : selectAll}
-            className="text-xs cursor-pointer px-3 py-1.5 rounded-lg"
-            style={{ background: "#111", color: "#808080", border: "1px solid #1a1a1a" }}>
+            style={{ padding: "9px 16px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", background: "#0d0d0d", color: "#666", border: "1px solid #222" }}>
             {allSelected ? "Deselect all" : "Select all"}
           </button>
 
           {selectedIds.size > 0 && (
             <>
               <button type="button" onClick={handleBulkDelete} disabled={saving}
-                className="text-xs cursor-pointer px-3 py-1.5 rounded-lg"
-                style={{ background: "#ef444422", color: "#ef4444", border: "1px solid #ef444444" }}>
+                style={{ padding: "9px 16px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", background: "#ef444418", color: "#ef4444", border: "1px solid #ef444433" }}>
                 Delete {selectedIds.size}
               </button>
 
               {otherCollections.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <select
-                    value={moveTarget ?? ""}
-                    onChange={(e) => setMoveTarget(e.target.value ? Number(e.target.value) : null)}
-                    className="text-xs rounded-lg px-2 py-1.5 cursor-pointer"
-                    style={{ background: "#111", color: "#808080", border: "1px solid #1a1a1a", outline: "none" }}
-                  >
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <select value={moveTarget ?? ""} onChange={(e) => setMoveTarget(e.target.value ? Number(e.target.value) : null)}
+                    style={{ padding: "9px 14px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", background: "#0d0d0d", color: "#666", border: "1px solid #222", outline: "none" }}>
                     <option value="">Move to…</option>
                     {otherCollections.map((c) => (
                       <option key={c.id} value={c.id}>{c.name}</option>
@@ -198,8 +192,7 @@ export function ImagesClient({
                   </select>
                   {moveTarget && (
                     <button type="button" onClick={handleBulkMove} disabled={saving}
-                      className="text-xs cursor-pointer px-3 py-1.5 rounded-lg"
-                      style={{ background: "#3b82f622", color: "#3b82f6", border: "1px solid #3b82f644" }}>
+                      style={{ padding: "9px 16px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", background: "#3b82f618", color: "#60a5fa", border: "1px solid #3b82f633" }}>
                       Move {selectedIds.size}
                     </button>
                   )}
@@ -208,7 +201,7 @@ export function ImagesClient({
             </>
           )}
 
-          <span className="ml-auto text-xs" style={{ color: "#444" }}>
+          <span style={{ marginLeft: "auto", fontSize: "13px", color: "#444" }}>
             {images.length} image{images.length !== 1 ? "s" : ""}
             {saving && " · Saving…"}
           </span>

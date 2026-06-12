@@ -11,6 +11,25 @@ interface SiteSettings {
   og_image?: string | null;
 }
 
+const inp: React.CSSProperties = {
+  background: "#0d0d0d",
+  border: "1px solid #222",
+  color: "#fff",
+  borderRadius: "10px",
+  padding: "12px 16px",
+  fontSize: "14px",
+  width: "100%",
+  outline: "none",
+  lineHeight: "1.5",
+};
+const lbl: React.CSSProperties = {
+  color: "#555",
+  fontSize: "11px",
+  fontWeight: 600,
+  textTransform: "uppercase",
+  letterSpacing: "0.08em",
+};
+
 export function SeoForm({ initialData }: { initialData: SiteSettings | null }) {
   const toast = useToast();
   const [isPending, startTransition] = useTransition();
@@ -58,54 +77,50 @@ export function SeoForm({ initialData }: { initialData: SiteSettings | null }) {
     });
   }
 
-  const inputStyle = {
-    background: "#0a0a0a",
-    border: "1px solid #1a1a1a",
-    color: "#fff",
-    borderRadius: "8px",
-    padding: "10px 14px",
-    fontSize: "14px",
-    width: "100%",
-    outline: "none",
-  };
-  const labelStyle = { color: "#808080", fontSize: "12px", fontWeight: 500 as const };
-
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6 max-w-2xl">
-      <div className="flex flex-col gap-2">
-        <label style={labelStyle}>SEO Title</label>
-        <input value={title} onChange={(e) => setTitle(e.target.value)} style={inputStyle} placeholder="Fisayoview Photography" />
-        <p className="text-xs" style={{ color: "#808080" }}>{title.length}/60 chars</p>
+    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "28px", maxWidth: "640px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <label style={lbl}>SEO Title</label>
+        <input value={title} onChange={(e) => setTitle(e.target.value)} style={inp} placeholder="FISAYOVIEW — Photography by Fisayo Obalana" />
+        <p style={{ fontSize: "12px", color: "#444", margin: 0 }}>{title.length}/60 characters</p>
       </div>
-      <div className="flex flex-col gap-2">
-        <label style={labelStyle}>Meta Description</label>
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} style={{ ...inputStyle, resize: "vertical" }} placeholder="Short description for search engines…" />
-        <p className="text-xs" style={{ color: "#808080" }}>{description.length}/160 chars</p>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <label style={lbl}>Meta Description</label>
+        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4}
+          style={{ ...inp, resize: "vertical" }} placeholder="Short description for search engines…" />
+        <p style={{ fontSize: "12px", color: "#444", margin: 0 }}>{description.length}/160 characters</p>
       </div>
-      <div className="flex flex-col gap-2">
-        <label style={labelStyle}>Keywords (comma-separated)</label>
-        <textarea value={keywords} onChange={(e) => setKeywords(e.target.value)} rows={3} style={{ ...inputStyle, resize: "vertical" }} placeholder="photography, wedding, portrait…" />
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <label style={lbl}>Keywords <span style={{ color: "#333", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(comma-separated)</span></label>
+        <textarea value={keywords} onChange={(e) => setKeywords(e.target.value)} rows={3}
+          style={{ ...inp, resize: "vertical" }} placeholder="photography, wedding, portrait, Lagos…" />
       </div>
 
       {/* OG Image */}
-      <div className="flex flex-col gap-2">
-        <label style={labelStyle}>Open Graph Image (1200×630)</label>
-        <div className="flex items-center gap-4 p-4 rounded-xl" style={{ background: "#0a0a0a", border: "1px solid #1a1a1a" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <label style={lbl}>Open Graph Image <span style={{ color: "#333", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>1200 × 630</span></label>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px", padding: "16px", borderRadius: "12px", background: "#0d0d0d", border: "1px solid #222" }}>
           {ogImage ? (
-            <div className="relative w-32 h-16 rounded-lg overflow-hidden flex-shrink-0">
+            <div style={{ position: "relative", width: "140px", height: "74px", borderRadius: "8px", overflow: "hidden", flexShrink: 0 }}>
               <Image src={ogImage} alt="OG" fill style={{ objectFit: "cover" }} />
             </div>
           ) : (
-            <div className="w-32 h-16 rounded-lg flex items-center justify-center flex-shrink-0 text-sm" style={{ background: "#1a1a1a", color: "#333" }}>1200×630</div>
+            <div style={{ width: "140px", height: "74px", borderRadius: "8px", background: "#1a1a1a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", color: "#333", flexShrink: 0 }}>
+              1200 × 630
+            </div>
           )}
-          <label htmlFor="og-upload" className="inline-block rounded-lg px-4 py-2 text-sm font-medium cursor-pointer" style={{ background: "#1a1a1a", color: "#fff", border: "1px solid #333" }}>
+          <label htmlFor="og-upload"
+            style={{ padding: "10px 18px", borderRadius: "10px", fontSize: "13px", fontWeight: 500, cursor: "pointer", background: "#1a1a1a", color: "#fff", border: "1px solid #2a2a2a", display: "inline-block" }}>
             {uploading ? "Uploading…" : "Upload image"}
           </label>
-          <input id="og-upload" type="file" accept="image/*" className="hidden" onChange={handleOgUpload} disabled={uploading} />
+          <input id="og-upload" type="file" accept="image/*" style={{ display: "none" }} onChange={handleOgUpload} disabled={uploading} />
         </div>
       </div>
 
-      <button type="submit" disabled={isPending} className="rounded-lg px-5 py-2.5 text-sm font-semibold cursor-pointer self-start" style={{ background: "#fff", color: "#000", opacity: isPending ? 0.7 : 1 }}>
+      <button type="submit" disabled={isPending}
+        style={{ padding: "12px 28px", borderRadius: "10px", fontSize: "14px", fontWeight: 600, background: "#fff", color: "#000", border: "none", cursor: "pointer", opacity: isPending ? 0.7 : 1, alignSelf: "flex-start" }}>
         {isPending ? "Saving…" : "Save SEO"}
       </button>
     </form>

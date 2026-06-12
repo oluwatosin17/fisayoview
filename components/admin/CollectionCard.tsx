@@ -9,15 +9,15 @@ interface CollectionCardProps {
     description: string | null;
     featured: boolean;
   };
-  onDelete?: (id: number) => void;
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  BIRTHDAY: "#f59e0b",
-  WEDDING: "#ec4899",
+  BIRTHDAY:   "#f59e0b",
+  WEDDING:    "#ec4899",
   GRADUATION: "#8b5cf6",
-  STUDIO: "#3b82f6",
-  ESSENCE: "#14b8a6",
+  STUDIO:     "#3b82f6",
+  ESSENCE:    "#14b8a6",
+  LAW:        "#6366f1",
 };
 
 export function CollectionCard({ collection }: CollectionCardProps) {
@@ -25,18 +25,19 @@ export function CollectionCard({ collection }: CollectionCardProps) {
     ? cdnUrl(collection.cover_cloudinary_id, { maxW: 400 })
     : collection.cover_url;
 
-  const catColor = CATEGORY_COLORS[collection.category] ?? "#666";
+  const catColor = CATEGORY_COLORS[collection.category] ?? "#888";
 
   return (
-    <div
-      className="rounded-xl overflow-hidden flex flex-col"
-      style={{ background: "#111", border: "1px solid #1a1a1a" }}
-    >
-      {/* Cover */}
-      <div
-        className="relative w-full"
-        style={{ height: "180px", background: "#0a0a0a" }}
-      >
+    <div style={{
+      background: "#0d0d0d",
+      border: "1px solid #1e1e1e",
+      borderRadius: "16px",
+      overflow: "hidden",
+      display: "flex",
+      flexDirection: "column",
+    }}>
+      {/* Cover image */}
+      <div style={{ position: "relative", width: "100%", height: "210px", background: "#111", flexShrink: 0 }}>
         {coverSrc ? (
           <Image
             src={coverSrc}
@@ -46,66 +47,70 @@ export function CollectionCard({ collection }: CollectionCardProps) {
             style={{ objectFit: "cover" }}
           />
         ) : (
-          <div className="flex items-center justify-center h-full text-3xl" style={{ color: "#333" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", fontSize: "40px", color: "#222" }}>
             ◫
           </div>
         )}
         {collection.featured && (
-          <span
-            className="absolute top-2 right-2 text-xs px-2 py-0.5 rounded-full font-medium"
-            style={{ background: "#22c55e22", color: "#22c55e", border: "1px solid #22c55e44" }}
-          >
+          <span style={{
+            position: "absolute", top: "12px", right: "12px",
+            padding: "4px 10px", borderRadius: "999px", fontSize: "11px", fontWeight: 600,
+            background: "#22c55e22", color: "#4ade80", border: "1px solid #22c55e44",
+          }}>
             Featured
           </span>
         )}
       </div>
 
       {/* Content */}
-      <div className="p-4 flex flex-col gap-3 flex-1">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="font-medium text-sm leading-tight" style={{ color: "#fff" }}>
+      <div style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "14px", flex: 1 }}>
+        {/* Name + category */}
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px" }}>
+          <h3 style={{ fontSize: "15px", fontWeight: 600, color: "#fff", margin: 0, lineHeight: 1.3, letterSpacing: "-0.01em" }}>
             {collection.name}
           </h3>
-          <span
-            className="text-xs px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0"
-            style={{
-              background: `${catColor}22`,
-              color: catColor,
-              border: `1px solid ${catColor}44`,
-            }}
-          >
+          <span style={{
+            padding: "4px 10px", borderRadius: "999px", fontSize: "11px", fontWeight: 600,
+            background: `${catColor}22`, color: catColor, border: `1px solid ${catColor}44`,
+            whiteSpace: "nowrap", flexShrink: 0,
+          }}>
             {collection.category}
           </span>
         </div>
 
-        <p className="text-xs" style={{ color: "#808080" }}>
+        {/* Image count */}
+        <p style={{ fontSize: "13px", color: "#555", margin: 0 }}>
           {collection.image_count} image{collection.image_count !== 1 ? "s" : ""}
         </p>
 
-        {/* Actions */}
-        <div className="flex gap-2 mt-auto pt-1">
-          <Link
-            href={`/admin/collections/${collection.id}`}
-            className="flex-1 text-center rounded-md py-2 text-xs font-medium transition-colors"
-            style={{ background: "#1a1a1a", color: "#fff", border: "1px solid #333" }}
-          >
+        {/* Action buttons */}
+        <div style={{ display: "flex", gap: "8px", marginTop: "auto" }}>
+          <Link href={`/admin/collections/${collection.id}`}
+            style={{
+              flex: 1, textAlign: "center", padding: "10px 0",
+              borderRadius: "10px", fontSize: "13px", fontWeight: 500,
+              background: "#1a1a1a", color: "#fff", border: "1px solid #2a2a2a",
+              textDecoration: "none", transition: "background 0.15s",
+            }}>
             Edit
           </Link>
-          <Link
-            href={`/admin/collections/${collection.id}/images`}
-            className="flex-1 text-center rounded-md py-2 text-xs font-medium transition-colors"
-            style={{ background: "#1a1a1a", color: "#808080", border: "1px solid #1a1a1a" }}
-          >
+          <Link href={`/admin/collections/${collection.id}/images`}
+            style={{
+              flex: 1, textAlign: "center", padding: "10px 0",
+              borderRadius: "10px", fontSize: "13px", fontWeight: 500,
+              background: "#1a1a1a", color: "#888", border: "1px solid #1e1e1e",
+              textDecoration: "none",
+            }}>
             Images
           </Link>
-          <a
-            href={`/projects/${collection.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-md px-3 py-2 text-xs transition-colors"
-            style={{ background: "#1a1a1a", color: "#808080", border: "1px solid #1a1a1a" }}
-            title="View on site"
-          >
+          <a href={`/projects/${collection.id}`} target="_blank" rel="noopener noreferrer"
+            style={{
+              padding: "10px 14px",
+              borderRadius: "10px", fontSize: "14px",
+              background: "#1a1a1a", color: "#666", border: "1px solid #1e1e1e",
+              textDecoration: "none", lineHeight: 1,
+            }}
+            title="View on site">
             ↗
           </a>
         </div>
