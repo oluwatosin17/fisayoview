@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { SeoForm } from "./SeoForm";
+import { PageHeader } from "@/components/admin/PageHeader";
 
 async function getSiteSettings() {
   const admin = supabaseAdmin();
@@ -9,15 +10,9 @@ async function getSiteSettings() {
 
 export default async function SeoPage() {
   const settings = await getSiteSettings();
-
   return (
-    <div style={{ padding: "48px 56px", maxWidth: "1100px", margin: "0 auto" }}>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold mb-1" style={{ color: "#fff" }}>SEO</h1>
-        <p className="text-sm" style={{ color: "#808080" }}>
-          Manage metadata and Open Graph settings
-        </p>
-      </div>
+    <div style={{ padding: "48px 48px", maxWidth: "800px", margin: "0 auto" }}>
+      <PageHeader title="SEO" description="Manage metadata, Open Graph image, and search engine settings" />
       <SeoForm initialData={settings} />
     </div>
   );

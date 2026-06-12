@@ -9,34 +9,32 @@ interface CollectionWithCount extends DbCollection {
   featured: boolean;
 }
 
-const CATEGORY_COLORS: Record<string, string> = {
-  BIRTHDAY: "#f59e0b",
-  WEDDING: "#ec4899",
-  GRADUATION: "#8b5cf6",
-  STUDIO: "#3b82f6",
-  ESSENCE: "#14b8a6",
-  LAW: "#6366f1",
+const CAT_COLORS: Record<string, string> = {
+  BIRTHDAY: "#f59e0b", WEDDING: "#ec4899", GRADUATION: "#8b5cf6",
+  STUDIO: "#3b82f6", ESSENCE: "#14b8a6", LAW: "#6366f1",
+};
+
+const CONTACT_STATUS_COLORS: Record<string, string> = {
+  NEW: "#60a5fa", CONTACTED: "#fbbf24", IN_PROGRESS: "#c4b5fd", BOOKED: "#4ade80", CLOSED: "#9ca3af",
 };
 
 async function getStats() {
   const admin = supabaseAdmin();
-
-  const [collectionsRes, imagesRes, recentRes, featuredRes, settingsRes, contactsRes] = await Promise.all([
+  const [colRes, imgRes, recentRes, featuredRes, settingsRes, contactsRes] = await Promise.all([
     admin.from("collections").select("id, category"),
     admin.from("images").select("id", { count: "exact", head: true }),
     admin.from("collections").select("*, images(count)").order("id", { ascending: false }).limit(8),
     admin.from("collections").select("id,name,cover_url,category").eq("featured", true).order("display_order").limit(6),
-    admin.from("site_settings").select("id,about_heading,about_text,instagram_url,email,about_portraits").limit(1).single(),
+    admin.from("site_settings").select("id,about_portraits").limit(1).single(),
     admin.from("contact_submissions").select("id,name,email,status,created_at").order("created_at", { ascending: false }).limit(5),
   ]);
 
-  const collections = collectionsRes.data ?? [];
-  const totalImages = imagesRes.count ?? 0;
-
-  const categoryBreakdown: Record<string, number> = {};
+  const collections = colRes.data ?? [];
+  const totalImages = imgRes.count ?? 0;
+  const catBreakdown: Record<string, number> = {};
   for (const col of collections) {
-    const cat = col.category ?? "UNKNOWN";
-    categoryBreakdown[cat] = (categoryBreakdown[cat] ?? 0) + 1;
+    const cat = col.category ?? "OTHER";
+    catBreakdown[cat] = (catBreakdown[cat] ?? 0) + 1;
   }
 
   const recent: CollectionWithCount[] = (recentRes.data ?? []).map((c) => ({
@@ -48,129 +46,118 @@ async function getStats() {
 
   const portraits = settingsRes.data?.about_portraits ?? [];
   const contacts = contactsRes.data ?? [];
-  const newContacts = contacts.filter((c: { status: string }) => c.status === "NEW").length;
 
   return {
     totalCollections: collections.length,
     totalImages,
-    categoryBreakdown,
+    catBreakdown,
+    totalCats: Object.keys(catBreakdown).length,
     recentCollections: recent,
     featuredCollections: featuredRes.data ?? [],
-    cmsConfigured: !!(settingsRes.data?.about_text),
     portraitCount: Array.isArray(portraits) ? portraits.length : 0,
     recentContacts: contacts,
-    newContacts,
+    newContacts: contacts.filter((c: { status: string }) => c.status === "NEW").length,
   };
 }
 
 export default async function DashboardPage() {
   const stats = await getStats();
-  const totalCats = Object.keys(stats.categoryBreakdown).length;
-  const maxCatCount = Math.max(...Object.values(stats.categoryBreakdown), 1);
+  const maxCat = Math.max(...Object.values(stats.catBreakdown), 1);
 
   return (
-    <div style={{ padding: "48px 56px", maxWidth: "1200px", margin: "0 auto" }}>
-      {/* Header */}
-      <div className="mb-10">
-        <h1 className="text-3xl font-semibold tracking-tight mb-1" style={{ color: "#fff", letterSpacing: "-0.02em" }}>
-          Dashboard
-        </h1>
-        <p className="text-sm" style={{ color: "#555" }}>
-          FISAYOVIEW portfolio management
-        </p>
+    <div style={{ padding: "48px 48px", maxWidth: "1200px", margin: "0 auto" }}>
+
+      {/* Page header */}
+      <div style={{ marginBottom: "40px" }}>
+        <h1 style={{ fontSize: "28px", fontWeight: 600, color: "#fff", margin: 0, letterSpacing: "-0.02em", lineHeight: 1.2 }}>Dashboard</h1>
+        <p style={{ fontSize: "14px", color: "#555", margin: "8px 0 0" }}>FISAYOVIEW portfolio overview</p>
       </div>
 
-      {/* Hero stats row */}
-      <div className="grid grid-cols-2 gap-5 mb-8 md:grid-cols-4">
-        <StatCard label="Collections" value={stats.totalCollections} suffix="" icon="◫" accent="#fff" />
-        <StatCard label="Total Images" value={stats.totalImages} suffix="" icon="⬡" accent="#a78bfa" />
-        <StatCard label="Categories" value={totalCats} suffix="" icon="⊞" accent="#f59e0b" />
-        <StatCard label="About Portraits" value={stats.portraitCount} suffix="" icon="◉" accent="#14b8a6" />
+      {/* Stat cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "24px" }}>
+        <StatCard label="Collections" value={stats.totalCollections} icon="◫" accent="#fff" />
+        <StatCard label="Images" value={stats.totalImages} icon="⬡" accent="#a78bfa" />
+        <StatCard label="Categories" value={stats.totalCats} icon="⊞" accent="#f59e0b" />
+        <StatCard label="Portraits" value={stats.portraitCount} icon="◉" accent="#14b8a6" />
       </div>
 
-      {/* Main content grid */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      {/* Two-column main content */}
+      <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: "16px", marginBottom: "16px" }}>
 
-        {/* Category breakdown — 1 col */}
-        <div className="rounded-2xl p-6 lg:col-span-1" style={{ background: "#111", border: "1px solid #1a1a1a" }}>
-          <h2 className="text-xs font-semibold uppercase tracking-widest mb-5" style={{ color: "#555" }}>By Category</h2>
-          <div className="flex flex-col gap-3">
-            {Object.entries(stats.categoryBreakdown)
-              .sort(([, a], [, b]) => b - a)
-              .map(([cat, count]) => {
-                const color = CATEGORY_COLORS[cat] ?? "#666";
-                const pct = Math.round((count / maxCatCount) * 100);
-                return (
-                  <div key={cat}>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-medium" style={{ color }}>{cat}</span>
-                      <span className="text-xs" style={{ color: "#555" }}>{count}</span>
-                    </div>
-                    <div className="rounded-full overflow-hidden" style={{ height: "4px", background: "#1a1a1a" }}>
-                      <div className="rounded-full h-full transition-all" style={{ width: `${pct}%`, background: color }} />
-                    </div>
-                  </div>
-                );
-              })}
-          </div>
-        </div>
-
-        {/* Recent collections — 2 col */}
-        <div className="rounded-2xl lg:col-span-2" style={{ background: "#111", border: "1px solid #1a1a1a" }}>
-          <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid #1a1a1a" }}>
-            <h2 className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#555" }}>Recent Collections</h2>
-            <Link href="/admin/collections" className="text-xs" style={{ color: "#555" }}>View all →</Link>
-          </div>
-          <ul>
-            {stats.recentCollections.map((col, i) => {
-              const color = CATEGORY_COLORS[col.category] ?? "#666";
+        {/* Categories breakdown */}
+        <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "24px" }}>
+          <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#444", margin: "0 0 20px" }}>
+            By Category
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            {Object.entries(stats.catBreakdown).sort(([, a], [, b]) => b - a).map(([cat, count]) => {
+              const color = CAT_COLORS[cat] ?? "#666";
+              const pct = Math.round((count / maxCat) * 100);
               return (
-                <li key={col.id} style={{ borderBottom: i < stats.recentCollections.length - 1 ? "1px solid #1a1a1a" : "none" }}>
-                  <Link href={`/admin/collections/${col.id}/images`} className="flex items-center gap-3 px-6 py-3 transition-colors hover:bg-[#161616]" style={{ textDecoration: "none" }}>
-                    {/* Thumbnail */}
-                    <div className="rounded overflow-hidden flex-shrink-0" style={{ width: 36, height: 36, background: "#1a1a1a" }}>
-                      {col.cover_url ? (
-                        <Image src={col.cover_url} alt={col.name} width={36} height={36} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center" style={{ color: "#333", fontSize: 12 }}>◫</div>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium truncate" style={{ color: "#fff" }}>{col.name}</span>
-                        {col.featured && <span className="text-xs px-1.5 py-0.5 rounded" style={{ background: "#ffffff11", color: "#888", fontSize: "10px" }}>FEATURED</span>}
-                      </div>
-                      <span className="text-xs" style={{ color: "#444" }}>{col.image_count} images</span>
-                    </div>
-                    <span className="text-xs px-2 py-1 rounded-full flex-shrink-0" style={{ background: `${color}18`, color }}>{col.category}</span>
-                  </Link>
-                </li>
+                <div key={cat}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
+                    <span style={{ fontSize: "12px", fontWeight: 500, color }}>{cat}</span>
+                    <span style={{ fontSize: "12px", color: "#444" }}>{count}</span>
+                  </div>
+                  <div style={{ height: "3px", background: "#1a1a1a", borderRadius: "999px", overflow: "hidden" }}>
+                    <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: "999px" }} />
+                  </div>
+                </div>
               );
             })}
-          </ul>
+          </div>
+        </div>
+
+        {/* Recent collections */}
+        <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", overflow: "hidden" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: "1px solid #111" }}>
+            <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#444", margin: 0 }}>Recent Collections</p>
+            <Link href="/admin/collections" style={{ fontSize: "12px", color: "#444", textDecoration: "none" }}>View all →</Link>
+          </div>
+          <div>
+            {stats.recentCollections.map((col, i) => {
+              const color = CAT_COLORS[col.category] ?? "#666";
+              return (
+                <Link key={col.id} href={`/admin/collections/${col.id}/images`}
+                  className="hover:bg-[#111] transition-colors" style={{ display: "flex", alignItems: "center", gap: "14px", padding: "16px 24px", borderBottom: i < stats.recentCollections.length - 1 ? "1px solid #111" : "none", textDecoration: "none" }}>
+                  <div style={{ width: 36, height: 36, borderRadius: "6px", overflow: "hidden", background: "#1a1a1a", flexShrink: 0 }}>
+                    {col.cover_url
+                      ? <Image src={col.cover_url} alt={col.name} width={36} height={36} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+                      : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#333", fontSize: 12 }}>◫</div>
+                    }
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <p style={{ fontSize: "13px", fontWeight: 500, color: "#fff", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{col.name}</p>
+                      {col.featured && <span style={{ fontSize: "10px", color: "#555", background: "#1a1a1a", padding: "2px 6px", borderRadius: "4px", flexShrink: 0 }}>FEATURED</span>}
+                    </div>
+                    <p style={{ fontSize: "12px", color: "#444", margin: "2px 0 0" }}>{col.image_count} images</p>
+                  </div>
+                  <span style={{ fontSize: "11px", fontWeight: 600, padding: "3px 8px", borderRadius: "5px", background: `${color}18`, color, flexShrink: 0 }}>{col.category}</span>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* Featured collections */}
+      {/* Featured collections strip */}
       {stats.featuredCollections.length > 0 && (
-        <div className="rounded-2xl mt-6 p-6" style={{ background: "#111", border: "1px solid #1a1a1a" }}>
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#555" }}>Featured on Homepage</h2>
-            <Link href="/admin/homepage" className="text-xs px-3 py-1.5 rounded-lg" style={{ background: "#1a1a1a", color: "#888", border: "1px solid #222" }}>
-              Manage →
-            </Link>
+        <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "24px", marginBottom: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#444", margin: 0 }}>Featured on Homepage</p>
+            <Link href="/admin/homepage" style={{ fontSize: "12px", color: "#444", textDecoration: "none", padding: "6px 12px", border: "1px solid #1a1a1a", borderRadius: "8px" }}>Manage →</Link>
           </div>
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "12px" }}>
             {stats.featuredCollections.map((col) => (
               <Link key={col.id} href={`/admin/collections/${col.id}/images`} style={{ textDecoration: "none" }}>
-                <div className="rounded-xl overflow-hidden aspect-square" style={{ background: "#1a1a1a" }}>
-                  {col.cover_url ? (
-                    <Image src={col.cover_url} alt={col.name} width={120} height={120} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center" style={{ color: "#333" }}>◫</div>
-                  )}
+                <div style={{ borderRadius: "10px", overflow: "hidden", aspectRatio: "1", background: "#1a1a1a" }}>
+                  {col.cover_url
+                    ? <Image src={col.cover_url} alt={col.name} width={120} height={120} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#333" }}>◫</div>
+                  }
                 </div>
-                <p className="text-xs mt-1.5 truncate" style={{ color: "#555" }}>{col.name}</p>
+                <p style={{ fontSize: "11px", color: "#555", marginTop: "8px", marginBottom: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{col.name}</p>
               </Link>
             ))}
           </div>
@@ -178,68 +165,55 @@ export default async function DashboardPage() {
       )}
 
       {/* Recent enquiries */}
-      <div className="rounded-2xl mt-6" style={{ background: "#111", border: "1px solid #1a1a1a" }}>
-        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid #1a1a1a" }}>
-          <div className="flex items-center gap-3">
-            <h2 className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#555" }}>Recent Enquiries</h2>
+      <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", overflow: "hidden", marginBottom: "16px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: "1px solid #111" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#444", margin: 0 }}>Recent Enquiries</p>
             {stats.newContacts > 0 && (
-              <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={{ background: "#3b82f622", color: "#60a5fa" }}>
+              <span style={{ fontSize: "11px", fontWeight: 600, padding: "2px 8px", borderRadius: "999px", background: "#3b82f618", color: "#60a5fa" }}>
                 {stats.newContacts} new
               </span>
             )}
           </div>
-          <Link href="/admin/contacts" className="text-xs" style={{ color: "#555" }}>View all →</Link>
+          <Link href="/admin/contacts" style={{ fontSize: "12px", color: "#444", textDecoration: "none" }}>View all →</Link>
         </div>
         {stats.recentContacts.length === 0 ? (
-          <div className="px-6 py-8 text-center text-sm" style={{ color: "#444" }}>No enquiries yet</div>
+          <div style={{ padding: "32px 24px", textAlign: "center", color: "#383838", fontSize: "13px" }}>No enquiries yet</div>
         ) : (
-          <ul>
-            {stats.recentContacts.map((c: { id: number; name: string; email: string; status: string; created_at: string }, i: number) => {
-              const stColors: Record<string, string> = { NEW: "#60a5fa", CONTACTED: "#fbbf24", IN_PROGRESS: "#c4b5fd", BOOKED: "#4ade80", CLOSED: "#9ca3af" };
-              const color = stColors[c.status] ?? "#60a5fa";
-              return (
-                <li key={c.id} style={{ borderBottom: i < stats.recentContacts.length - 1 ? "1px solid #1a1a1a" : "none" }}>
-                  <Link href={`/admin/contacts/${c.id}`} className="flex items-center gap-3 px-6 py-3" style={{ textDecoration: "none" }}>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate" style={{ color: "#fff" }}>{c.name}</p>
-                      <p className="text-xs truncate" style={{ color: "#444" }}>{c.email}</p>
-                    </div>
-                    <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: `${color}22`, color }}>
-                      {c.status.replace("_", " ")}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          stats.recentContacts.map((c: { id: number; name: string; email: string; status: string; created_at: string }, i: number) => {
+            const color = CONTACT_STATUS_COLORS[c.status] ?? "#60a5fa";
+            return (
+              <Link key={c.id} href={`/admin/contacts/${c.id}`}
+                className="hover:bg-[#111] transition-colors" style={{ display: "flex", alignItems: "center", gap: "12px", padding: "16px 24px", borderBottom: i < stats.recentContacts.length - 1 ? "1px solid #111" : "none", textDecoration: "none" }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: "13px", fontWeight: 500, color: "#fff", margin: 0 }}>{c.name}</p>
+                  <p style={{ fontSize: "12px", color: "#444", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.email}</p>
+                </div>
+                <span style={{ fontSize: "11px", fontWeight: 600, padding: "3px 10px", borderRadius: "5px", background: `${color}18`, color, flexShrink: 0 }}>
+                  {c.status.replace("_", " ")}
+                </span>
+              </Link>
+            );
+          })
         )}
       </div>
 
       {/* Quick actions */}
-      <div className="flex flex-wrap gap-3 mt-8">
-        <Link href="/admin/collections/new"
-          className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold"
-          style={{ background: "#fff", color: "#000" }}>
+      <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+        <Link href="/admin/collections/new" style={{ padding: "10px 20px", borderRadius: "10px", fontSize: "13px", fontWeight: 600, background: "#fff", color: "#000", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px" }}>
           + New Collection
         </Link>
-        <Link href="/admin/homepage"
-          className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium"
-          style={{ background: "#1a1a1a", color: "#fff", border: "1px solid #252525" }}>
+        <Link href="/admin/homepage" style={{ padding: "10px 20px", borderRadius: "10px", fontSize: "13px", fontWeight: 500, background: "#111", color: "#fff", border: "1px solid #222", textDecoration: "none" }}>
           Homepage Builder
         </Link>
-        <Link href="/admin/about"
-          className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium"
-          style={{ background: "#1a1a1a", color: "#fff", border: "1px solid #252525" }}>
+        <Link href="/admin/contacts" style={{ padding: "10px 20px", borderRadius: "10px", fontSize: "13px", fontWeight: 500, background: "#111", color: "#fff", border: "1px solid #222", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "8px" }}>
+          Contacts
+          {stats.newContacts > 0 && <span style={{ fontSize: "11px", fontWeight: 600, background: "#3b82f630", color: "#60a5fa", padding: "1px 7px", borderRadius: "999px" }}>{stats.newContacts}</span>}
+        </Link>
+        <Link href="/admin/about" style={{ padding: "10px 20px", borderRadius: "10px", fontSize: "13px", fontWeight: 500, background: "#111", color: "#fff", border: "1px solid #222", textDecoration: "none" }}>
           Edit About
         </Link>
-        <Link href="/admin/contacts"
-          className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium"
-          style={{ background: "#1a1a1a", color: "#fff", border: "1px solid #252525" }}>
-          Contacts {stats.newContacts > 0 && <span style={{ background: "#3b82f644", color: "#60a5fa", fontSize: "11px", padding: "1px 7px", borderRadius: "999px" }}>{stats.newContacts}</span>}
-        </Link>
-        <a href="/" target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium"
-          style={{ background: "#1a1a1a", color: "#fff", border: "1px solid #252525" }}>
+        <a href="/" target="_blank" rel="noopener noreferrer" style={{ padding: "10px 20px", borderRadius: "10px", fontSize: "13px", fontWeight: 500, background: "#111", color: "#666", border: "1px solid #1a1a1a", textDecoration: "none" }}>
           View Site ↗
         </a>
       </div>
@@ -247,12 +221,12 @@ export default async function DashboardPage() {
   );
 }
 
-function StatCard({ label, value, icon, accent }: { label: string; value: number; suffix: string; icon: string; accent: string }) {
+function StatCard({ label, value, icon, accent }: { label: string; value: number; icon: string; accent: string }) {
   return (
-    <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "24px 22px", display: "flex", flexDirection: "column", gap: "16px" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#555", margin: 0 }}>{label}</p>
-        <span style={{ fontSize: "16px", color: accent, opacity: 0.7 }}>{icon}</span>
+    <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "24px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+        <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#444", margin: 0 }}>{label}</p>
+        <span style={{ fontSize: "15px", color: accent, opacity: 0.6 }}>{icon}</span>
       </div>
       <p style={{ fontSize: "36px", fontWeight: 600, color: accent, letterSpacing: "-0.03em", margin: 0, lineHeight: 1 }}>
         {value.toLocaleString()}

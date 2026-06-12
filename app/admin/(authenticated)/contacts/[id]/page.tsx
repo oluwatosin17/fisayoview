@@ -80,7 +80,7 @@ export default function ContactDetailPage() {
 
   if (!contact) {
     return (
-      <div style={{ padding: "48px 56px" }}>
+      <div style={{ padding: "48px 48px" }}>
         <div style={{ fontSize: "14px", color: "#444" }}>Loading…</div>
       </div>
     );
@@ -98,7 +98,7 @@ export default function ContactDetailPage() {
   };
 
   return (
-    <div style={{ padding: "48px 56px", maxWidth: "900px", margin: "0 auto" }}>
+    <div style={{ padding: "48px 48px", maxWidth: "900px", margin: "0 auto" }}>
       {/* Breadcrumb */}
       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "28px", fontSize: "13px" }}>
         <Link href="/admin/contacts" style={{ color: "#555", textDecoration: "none" }}>Contacts</Link>
@@ -171,7 +171,7 @@ export default function ContactDetailPage() {
               style={{ ...inp, resize: "vertical", lineHeight: "1.6", marginBottom: "12px" }}
             />
             <button type="button" onClick={saveNotes} disabled={isPending}
-              style={{ padding: "10px 20px", borderRadius: "10px", fontSize: "13px", fontWeight: 600, background: "#fff", color: "#000", border: "none", cursor: "pointer", opacity: isPending ? 0.7 : 1 }}>
+              style={{ padding: "10px 24px", borderRadius: "10px", fontSize: "13px", fontWeight: 600, background: "#fff", color: "#000", border: "none", cursor: "pointer", opacity: isPending ? 0.7 : 1 }}>
               {isPending ? "Saving…" : "Save notes"}
             </button>
           </div>

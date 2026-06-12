@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import HomepageClient from "./HomepageClient";
+import { PageHeader } from "@/components/admin/PageHeader";
 
 async function getCollections() {
   const admin = supabaseAdmin();
@@ -13,15 +14,8 @@ async function getCollections() {
 export default async function HomepagePage() {
   const collections = await getCollections();
   return (
-    <div style={{ padding: "48px 56px", maxWidth: "1100px", margin: "0 auto" }}>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold mb-1" style={{ color: "#fff", letterSpacing: "-0.02em" }}>
-          Homepage Builder
-        </h1>
-        <p className="text-sm" style={{ color: "#555" }}>
-          Toggle featured collections and drag to reorder them on the homepage.
-        </p>
-      </div>
+    <div style={{ padding: "48px 48px", maxWidth: "900px", margin: "0 auto" }}>
+      <PageHeader title="Homepage Builder" description="Toggle featured collections and drag to reorder them on the homepage." />
       <HomepageClient initialCollections={collections} />
     </div>
   );

@@ -168,23 +168,23 @@ export function ImagesClient({
       {/* Images */}
       <div>
         {/* Toolbar */}
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px", flexWrap: "wrap" }}>
           <button type="button" onClick={allSelected ? deselectAll : selectAll}
-            style={{ padding: "9px 16px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", background: "#0d0d0d", color: "#666", border: "1px solid #222" }}>
+            style={{ padding: "8px 16px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", background: "#0d0d0d", color: "#666", border: "1px solid #222" }}>
             {allSelected ? "Deselect all" : "Select all"}
           </button>
 
           {selectedIds.size > 0 && (
             <>
               <button type="button" onClick={handleBulkDelete} disabled={saving}
-                style={{ padding: "9px 16px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", background: "#ef444418", color: "#ef4444", border: "1px solid #ef444433" }}>
+                style={{ padding: "8px 16px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", background: "#ef444418", color: "#ef4444", border: "1px solid #ef444433" }}>
                 Delete {selectedIds.size}
               </button>
 
               {otherCollections.length > 0 && (
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <select value={moveTarget ?? ""} onChange={(e) => setMoveTarget(e.target.value ? Number(e.target.value) : null)}
-                    style={{ padding: "9px 14px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", background: "#0d0d0d", color: "#666", border: "1px solid #222", outline: "none" }}>
+                    style={{ padding: "8px 14px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", background: "#0d0d0d", color: "#666", border: "1px solid #222", outline: "none" }}>
                     <option value="">Move to…</option>
                     {otherCollections.map((c) => (
                       <option key={c.id} value={c.id}>{c.name}</option>
@@ -192,7 +192,7 @@ export function ImagesClient({
                   </select>
                   {moveTarget && (
                     <button type="button" onClick={handleBulkMove} disabled={saving}
-                      style={{ padding: "9px 16px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", background: "#3b82f618", color: "#60a5fa", border: "1px solid #3b82f633" }}>
+                      style={{ padding: "8px 16px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", background: "#3b82f618", color: "#60a5fa", border: "1px solid #3b82f633" }}>
                       Move {selectedIds.size}
                     </button>
                   )}

@@ -3,18 +3,10 @@
 import { useState, useTransition, useCallback, useEffect } from "react";
 import Image from "next/image";
 import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
+  DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  horizontalListSortingStrategy,
+  arrayMove, SortableContext, useSortable, horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useToast } from "@/components/admin/Toast";
@@ -29,48 +21,33 @@ interface SiteSettings {
   email?: string | null;
 }
 
-function SortablePortrait({
-  portrait,
-  onDelete,
-}: {
-  portrait: Portrait;
-  onDelete: (id: string) => void;
-}) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: portrait.cloudinary_public_id });
+// ── Shared style tokens ────────────────────────────────────────────────────
+const inp: React.CSSProperties = {
+  background: "#080808", border: "1px solid #1e1e1e", color: "#fff",
+  borderRadius: "10px", padding: "12px 16px", fontSize: "14px",
+  width: "100%", outline: "none", lineHeight: "1.6",
+};
+const lbl: React.CSSProperties = {
+  fontSize: "11px", fontWeight: 600, textTransform: "uppercase",
+  letterSpacing: "0.08em", color: "#555",
+};
+const section: React.CSSProperties = {
+  background: "#0d0d0d", border: "1px solid #1a1a1a",
+  borderRadius: "16px", padding: "28px",
+};
 
+function SortablePortrait({ portrait, onDelete }: { portrait: Portrait; onDelete: (id: string) => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: portrait.cloudinary_public_id });
   return (
-    <div
-      ref={setNodeRef}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-        opacity: isDragging ? 0.5 : 1,
-        position: "relative",
-        flexShrink: 0,
-      }}
-      className="group"
-    >
-      <div
-        {...attributes}
-        {...listeners}
-        className="rounded-xl overflow-hidden cursor-grab active:cursor-grabbing"
-        style={{ width: 100, height: 130, background: "#1a1a1a" }}
-      >
-        <Image
-          src={portrait.url}
-          alt="Portrait"
-          width={100}
-          height={130}
-          style={{ objectFit: "cover", width: "100%", height: "100%", pointerEvents: "none" }}
-        />
+    <div ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1, position: "relative", flexShrink: 0 }} className="group">
+      <div {...attributes} {...listeners} style={{ width: 96, height: 124, borderRadius: "10px", overflow: "hidden", background: "#1a1a1a", cursor: "grab" }}>
+        <Image src={portrait.url} alt="Portrait" width={96} height={124} style={{ objectFit: "cover", width: "100%", height: "100%", pointerEvents: "none" }} />
       </div>
-      <button
-        type="button"
-        onClick={() => onDelete(portrait.cloudinary_public_id)}
-        className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-xs cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{ background: "#ef4444", color: "#fff", border: "none" }}
-      >
+      <button type="button" onClick={() => onDelete(portrait.cloudinary_public_id)}
+        style={{ position: "absolute", top: "6px", right: "6px", width: 22, height: 22, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", cursor: "pointer", background: "#ef4444", color: "#fff", border: "none", opacity: 0, transition: "opacity 0.15s" }}
+        className="group-hover:opacity-100"
+        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0"; }}>
         ✕
       </button>
     </div>
@@ -115,12 +92,7 @@ export function AboutForm({ initialData }: { initialData: SiteSettings | null })
         const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
         if (!res.ok) { toast.error(`Upload failed: ${file.name}`); continue; }
         const data = await res.json();
-        const newPortrait: Portrait = {
-          cloudinary_public_id: data.public_id,
-          url: data.secure_url,
-          sort_order: portraits.length,
-        };
-        setPortraits((prev) => [...prev, newPortrait]);
+        setPortraits((prev) => [...prev, { cloudinary_public_id: data.public_id, url: data.secure_url, sort_order: prev.length }]);
       }
       toast.success("Portrait uploaded");
     } catch {
@@ -129,7 +101,7 @@ export function AboutForm({ initialData }: { initialData: SiteSettings | null })
       setUploading(false);
       e.target.value = "";
     }
-  }, [portraits.length, toast]);
+  }, [toast]);
 
   function deletePortrait(id: string) {
     setPortraits((prev) => prev.filter((p) => p.cloudinary_public_id !== id));
@@ -139,86 +111,59 @@ export function AboutForm({ initialData }: { initialData: SiteSettings | null })
     e.preventDefault();
     startTransition(async () => {
       try {
-        const normalizedPortraits = portraits.map((p, i) => ({ ...p, sort_order: i }));
         const res = await fetch("/api/admin/site-settings", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            about_heading: heading,
-            about_text: text,
-            instagram_url: instagram,
-            whatsapp,
-            email,
-            about_portraits: normalizedPortraits,
+            about_heading: heading, about_text: text,
+            instagram_url: instagram, whatsapp, email,
+            about_portraits: portraits.map((p, i) => ({ ...p, sort_order: i })),
           }),
         });
-        if (!res.ok) throw new Error("Save failed");
-        toast.success("About page saved");
+        if (!res.ok) throw new Error();
+        toast.success("Saved");
       } catch {
         toast.error("Failed to save");
       }
     });
   }
 
-  const inputStyle = {
-    background: "#0a0a0a",
-    border: "1px solid #1a1a1a",
-    color: "#fff",
-    borderRadius: "10px",
-    padding: "10px 14px",
-    fontSize: "14px",
-    width: "100%",
-    outline: "none",
-  };
-  const labelStyle = { color: "#555", fontSize: "11px", fontWeight: 600 as const, textTransform: "uppercase" as const, letterSpacing: "0.08em" };
-
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-8 max-w-2xl">
+    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "24px", maxWidth: "680px" }}>
 
       {/* Portrait gallery */}
-      <div className="rounded-2xl p-5" style={{ background: "#111", border: "1px solid #1a1a1a" }}>
-        <div className="flex items-center justify-between mb-4">
+      <div style={section}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "20px" }}>
           <div>
-            <label style={labelStyle}>Portrait Gallery</label>
-            <p className="text-xs mt-0.5" style={{ color: "#444" }}>Drag to reorder · {portraits.length} photo{portraits.length !== 1 ? "s" : ""}</p>
+            <p style={{ ...lbl, margin: "0 0 4px" }}>Portrait Gallery</p>
+            <p style={{ fontSize: "12px", color: "#444", margin: 0 }}>
+              Drag to reorder · {portraits.length} photo{portraits.length !== 1 ? "s" : ""}
+            </p>
           </div>
-          <label
-            htmlFor="portrait-upload"
-            className="rounded-lg px-3 py-1.5 text-xs font-semibold cursor-pointer"
-            style={{ background: "#fff", color: "#000", opacity: uploading ? 0.6 : 1 }}
-          >
+          <label htmlFor="portrait-upload"
+            style={{ padding: "9px 18px", borderRadius: "9px", fontSize: "13px", fontWeight: 600, cursor: uploading ? "not-allowed" : "pointer", background: uploading ? "#222" : "#fff", color: uploading ? "#666" : "#000", display: "inline-block", flexShrink: 0 }}>
             {uploading ? "Uploading…" : "+ Add Photo"}
           </label>
-          <input
-            id="portrait-upload"
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={handlePortraitUpload}
-            disabled={uploading}
-          />
+          <input id="portrait-upload" type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handlePortraitUpload} disabled={uploading} />
         </div>
 
         {portraits.length === 0 ? (
-          <div className="rounded-xl flex items-center justify-center py-10 text-center" style={{ background: "#0a0a0a", border: "1px dashed #222" }}>
-            <p className="text-xs" style={{ color: "#444" }}>No portraits yet — upload to get started</p>
+          <div style={{ padding: "40px 24px", textAlign: "center", background: "#080808", border: "1px dashed #1e1e1e", borderRadius: "10px" }}>
+            <p style={{ fontSize: "13px", color: "#383838", margin: 0 }}>No portraits yet — click + Add Photo to upload</p>
           </div>
         ) : !mounted ? (
-          <div className="flex gap-3 flex-wrap">
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
             {portraits.map((p) => (
-              <div key={p.cloudinary_public_id} className="rounded-xl overflow-hidden" style={{ width: 100, height: 130, background: "#1a1a1a", flexShrink: 0 }}>
-                <Image src={p.url} alt="Portrait" width={100} height={130} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+              <div key={p.cloudinary_public_id} style={{ width: 96, height: 124, borderRadius: "10px", overflow: "hidden", background: "#1a1a1a", flexShrink: 0 }}>
+                <Image src={p.url} alt="Portrait" width={96} height={124} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
               </div>
             ))}
           </div>
         ) : (
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={portraits.map((p) => p.cloudinary_public_id)} strategy={horizontalListSortingStrategy}>
-              <div className="flex gap-3 flex-wrap">
-                {portraits.map((p) => (
-                  <SortablePortrait key={p.cloudinary_public_id} portrait={p} onDelete={deletePortrait} />
-                ))}
+              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                {portraits.map((p) => <SortablePortrait key={p.cloudinary_public_id} portrait={p} onDelete={deletePortrait} />)}
               </div>
             </SortableContext>
           </DndContext>
@@ -226,48 +171,41 @@ export function AboutForm({ initialData }: { initialData: SiteSettings | null })
       </div>
 
       {/* Bio fields */}
-      <div className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <label style={labelStyle}>Heading</label>
-          <input value={heading} onChange={(e) => setHeading(e.target.value)} style={inputStyle} placeholder="FISAYOVIEW" />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label style={labelStyle}>Biography</label>
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            rows={9}
-            style={{ ...inputStyle, resize: "vertical", lineHeight: "1.6" }}
-            placeholder="Tell your story…"
-          />
+      <div style={section}>
+        <p style={{ ...lbl, margin: "0 0 20px" }}>Biography</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <label style={lbl}>Heading</label>
+            <input value={heading} onChange={(e) => setHeading(e.target.value)} style={inp} placeholder="FISAYOVIEW" />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <label style={lbl}>Biography Text</label>
+            <textarea value={text} onChange={(e) => setText(e.target.value)} rows={8} style={{ ...inp, resize: "vertical" }} placeholder="Tell your story…" />
+          </div>
         </div>
       </div>
 
-      <hr style={{ border: "none", borderTop: "1px solid #1a1a1a" }} />
-
-      {/* Contact fields */}
-      <div className="flex flex-col gap-5">
-        <p style={labelStyle}>Contact Details</p>
-        <div className="flex flex-col gap-2">
-          <label style={{ ...labelStyle, textTransform: "none" as const, letterSpacing: 0 }}>Instagram URL</label>
-          <input value={instagram} onChange={(e) => setInstagram(e.target.value)} style={inputStyle} placeholder="https://instagram.com/fisayoview" />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label style={{ ...labelStyle, textTransform: "none" as const, letterSpacing: 0 }}>WhatsApp Number</label>
-          <input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} style={inputStyle} placeholder="+2348000000000" />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label style={{ ...labelStyle, textTransform: "none" as const, letterSpacing: 0 }}>Email</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} placeholder="bookfisayoview@gmail.com" />
+      {/* Contact details */}
+      <div style={section}>
+        <p style={{ ...lbl, margin: "0 0 20px" }}>Contact Details</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <label style={lbl}>Instagram URL</label>
+            <input value={instagram} onChange={(e) => setInstagram(e.target.value)} style={inp} placeholder="https://instagram.com/fisayoview" />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <label style={lbl}>WhatsApp Number</label>
+            <input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} style={inp} placeholder="+2348000000000" />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <label style={lbl}>Email</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inp} placeholder="bookfisayoview@gmail.com" />
+          </div>
         </div>
       </div>
 
-      <button
-        type="submit"
-        disabled={isPending || uploading}
-        className="rounded-xl px-6 py-3 text-sm font-semibold cursor-pointer self-start"
-        style={{ background: "#fff", color: "#000", opacity: (isPending || uploading) ? 0.7 : 1 }}
-      >
+      <button type="submit" disabled={isPending || uploading}
+        style={{ padding: "10px 24px", borderRadius: "10px", fontSize: "13px", fontWeight: 600, background: "#fff", color: "#000", border: "none", cursor: "pointer", opacity: (isPending || uploading) ? 0.7 : 1, alignSelf: "flex-start" }}>
         {isPending ? "Saving…" : "Save Changes"}
       </button>
     </form>

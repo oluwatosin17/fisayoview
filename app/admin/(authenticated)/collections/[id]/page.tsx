@@ -19,12 +19,12 @@ export default async function EditCollectionPage({ params }: Props) {
   if (error || !collection) notFound();
 
   return (
-    <div className="p-8 max-w-3xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold mb-1" style={{ color: "#fff" }}>
+    <div style={{ padding: "48px 48px", maxWidth: "1100px", margin: "0 auto" }}>
+      <div style={{ marginBottom: "40px" }}>
+        <h1 style={{ fontSize: "28px", fontWeight: 600, color: "#fff", margin: 0, letterSpacing: "-0.02em", lineHeight: 1.2 }}>
           Edit Collection
         </h1>
-        <p className="text-sm" style={{ color: "#808080" }}>
+        <p style={{ fontSize: "14px", color: "#555", margin: "8px 0 0" }}>
           {collection.name}
         </p>
       </div>

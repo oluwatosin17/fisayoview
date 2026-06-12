@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import ContactsClient from "./ContactsClient";
+import { PageHeader } from "@/components/admin/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -28,15 +29,8 @@ async function getStats() {
 export default async function ContactsPage() {
   const [contacts, stats] = await Promise.all([getContacts(), getStats()]);
   return (
-    <div style={{ padding: "48px 56px", maxWidth: "1200px", margin: "0 auto" }}>
-      <div style={{ marginBottom: "36px" }}>
-        <h1 style={{ fontSize: "28px", fontWeight: 600, color: "#fff", letterSpacing: "-0.02em", margin: 0, lineHeight: 1.2 }}>
-          Contacts
-        </h1>
-        <p style={{ fontSize: "14px", color: "#555", margin: "6px 0 0" }}>
-          Lead management — all enquiries from the contact form
-        </p>
-      </div>
+    <div style={{ padding: "48px 48px", maxWidth: "1200px", margin: "0 auto" }}>
+      <PageHeader title="Contacts" description="Lead management — all enquiries from the contact form" />
       <ContactsClient initialContacts={contacts} stats={stats} />
     </div>
   );

@@ -269,15 +269,15 @@ export function CollectionForm({ initialData, collectionId, mode }: CollectionFo
       </div>
 
       {/* Actions */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px", paddingTop: "8px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", paddingTop: "8px" }}>
         <button type="submit" disabled={isPending || uploading}
-          style={{ padding: "12px 24px", borderRadius: "10px", fontSize: "14px", fontWeight: 600,
+          style={{ padding: "10px 24px", borderRadius: "10px", fontSize: "13px", fontWeight: 600,
             background: "#fff", color: "#000", border: "none", cursor: "pointer",
             opacity: (isPending || uploading) ? 0.7 : 1 }}>
           {isPending ? "Saving…" : mode === "create" ? "Create Collection" : "Save Changes"}
         </button>
         <button type="button" onClick={() => router.back()}
-          style={{ padding: "12px 20px", borderRadius: "10px", fontSize: "14px",
+          style={{ padding: "10px 18px", borderRadius: "10px", fontSize: "13px",
             background: "#111", color: "#666", border: "1px solid #222", cursor: "pointer" }}>
           Cancel
         </button>
@@ -288,12 +288,12 @@ export function CollectionForm({ initialData, collectionId, mode }: CollectionFo
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <span style={{ fontSize: "12px", color: "#666" }}>Are you sure?</span>
                 <button type="button" onClick={handleDelete} disabled={isPending}
-                  style={{ padding: "8px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: 500, cursor: "pointer",
+                  style={{ padding: "7px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: 500, cursor: "pointer",
                     background: "#ef444422", color: "#ef4444", border: "1px solid #ef444444" }}>
                   Yes, delete
                 </button>
                 <button type="button" onClick={() => setShowDeleteConfirm(false)}
-                  style={{ padding: "8px 12px", borderRadius: "8px", fontSize: "12px",
+                  style={{ padding: "7px 12px", borderRadius: "8px", fontSize: "12px",
                     background: "#111", color: "#555", border: "1px solid #222", cursor: "pointer" }}>
                   Cancel
                 </button>

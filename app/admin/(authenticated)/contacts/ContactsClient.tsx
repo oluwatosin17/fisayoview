@@ -78,7 +78,7 @@ export default function ContactsClient({ initialContacts }: { initialContacts: C
   return (
     <div>
       {/* Stats row */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px", marginBottom: "36px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px", marginBottom: "32px" }}>
         {[
           { label: "Total",     value: kpis.total,     color: "#fff"    },
           { label: "New",       value: kpis.new,       color: "#60a5fa" },
@@ -86,7 +86,7 @@ export default function ContactsClient({ initialContacts }: { initialContacts: C
           { label: "Booked",    value: kpis.booked,    color: "#4ade80" },
           { label: "Closed",    value: kpis.closed,    color: "#9ca3af" },
         ].map(({ label, value, color }) => (
-          <div key={label} style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "24px 22px" }}>
+          <div key={label} style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "24px" }}>
             <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "#555", margin: "0 0 12px" }}>{label}</p>
             <p style={{ fontSize: "36px", fontWeight: 600, color, letterSpacing: "-0.03em", margin: 0, lineHeight: 1 }}>{value}</p>
           </div>
@@ -105,7 +105,7 @@ export default function ContactsClient({ initialContacts }: { initialContacts: C
           {STATUSES.map((s) => (
             <button key={s} type="button" onClick={() => setActiveStatus(s)}
               style={{
-                padding: "9px 16px", borderRadius: "8px", fontSize: "12px", fontWeight: 500, cursor: "pointer",
+                padding: "8px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: 500, cursor: "pointer",
                 background: activeStatus === s ? "#fff" : "#0d0d0d",
                 color: activeStatus === s ? "#000" : "#555",
                 border: `1px solid ${activeStatus === s ? "#fff" : "#222"}`,
@@ -132,7 +132,7 @@ export default function ContactsClient({ initialContacts }: { initialContacts: C
           {/* Header */}
           <div style={{
             display: "grid", gridTemplateColumns: "1.2fr 1fr 150px 120px 130px 130px",
-            padding: "13px 28px", borderBottom: "1px solid #161616", background: "#080808",
+            padding: "12px 24px", borderBottom: "1px solid #161616", background: "#080808",
           }}>
             {["Name", "Email", "Phone", "Type", "Status", "Date"].map((h) => (
               <span key={h} style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "#444" }}>{h}</span>
@@ -146,7 +146,7 @@ export default function ContactsClient({ initialContacts }: { initialContacts: C
               <div key={c.id}
                 style={{
                   display: "grid", gridTemplateColumns: "1.2fr 1fr 150px 120px 130px 130px",
-                  padding: "18px 28px", borderBottom: i < filtered.length - 1 ? "1px solid #111" : "none",
+                  padding: "16px 24px", borderBottom: i < filtered.length - 1 ? "1px solid #111" : "none",
                   alignItems: "center", cursor: "pointer", transition: "background 0.15s",
                 }}
                 onClick={() => router.push(`/admin/contacts/${c.id}`)}

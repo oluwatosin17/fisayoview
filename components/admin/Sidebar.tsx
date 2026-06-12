@@ -6,13 +6,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/admin/supabase-browser";
 
 const NAV_LINKS = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: "⊞" },
+  { href: "/admin/dashboard",   label: "Dashboard",   icon: "⊞" },
   { href: "/admin/collections", label: "Collections", icon: "◫" },
-  { href: "/admin/homepage", label: "Homepage", icon: "⬡" },
-  { href: "/admin/about", label: "About", icon: "◉" },
-  { href: "/admin/seo", label: "SEO", icon: "⌖" },
-  { href: "/admin/contacts", label: "Contacts", icon: "✉" },
-  { href: "/admin/settings", label: "Settings", icon: "⚙" },
+  { href: "/admin/homepage",    label: "Homepage",    icon: "⬡" },
+  { href: "/admin/about",       label: "About",       icon: "◉" },
+  { href: "/admin/seo",         label: "SEO",         icon: "⌖" },
+  { href: "/admin/contacts",    label: "Contacts",    icon: "✉" },
+  { href: "/admin/settings",    label: "Settings",    icon: "⚙" },
 ] as const;
 
 export function Sidebar() {
@@ -27,23 +27,28 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="flex flex-col h-screen sticky top-0"
-      style={{ width: "240px", minWidth: "240px", background: "#080808", borderRight: "1px solid #161616" }}>
+    <aside style={{
+      width: "232px", minWidth: "232px",
+      background: "#070707",
+      borderRight: "1px solid #141414",
+      display: "flex", flexDirection: "column",
+      height: "100vh", position: "sticky", top: 0,
+    }}>
 
       {/* Logo */}
-      <div className="flex items-center gap-3" style={{ padding: "24px 20px 20px", borderBottom: "1px solid #161616" }}>
-        <div className="flex items-center justify-center rounded-lg" style={{ background: "#fff", width: 34, height: 34, flexShrink: 0 }}>
+      <div style={{ padding: "24px 20px", borderBottom: "1px solid #141414", display: "flex", alignItems: "center", gap: "12px" }}>
+        <div style={{ width: 34, height: 34, background: "#fff", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
           <Image src="/logo-black.png" alt="FV" width={22} height={22} style={{ objectFit: "contain" }} />
         </div>
         <div>
-          <p className="font-semibold tracking-widest" style={{ color: "#fff", fontSize: "11px", letterSpacing: "0.18em" }}>FISAYOVIEW</p>
-          <p style={{ color: "#444", fontSize: "10px", marginTop: "1px" }}>Admin Panel</p>
+          <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.16em", color: "#fff", margin: 0, lineHeight: 1.3 }}>FISAYOVIEW</p>
+          <p style={{ fontSize: "10px", color: "#383838", margin: 0, lineHeight: 1.3, marginTop: "2px" }}>Admin Panel</p>
         </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto" style={{ padding: "12px 12px" }}>
-        <ul style={{ display: "flex", flexDirection: "column", gap: "2px", listStyle: "none", margin: 0, padding: 0 }}>
+      <nav style={{ flex: 1, overflowY: "auto", padding: "12px 8px" }}>
+        <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "2px" }}>
           {NAV_LINKS.map(({ href, label, icon }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
             return (
@@ -51,12 +56,16 @@ export function Sidebar() {
                 <Link href={href} style={{
                   display: "flex", alignItems: "center", gap: "10px",
                   padding: "10px 12px", borderRadius: "8px",
-                  background: active ? "#151515" : "transparent",
-                  color: active ? "#fff" : "#555",
-                  textDecoration: "none", fontSize: "13px", fontWeight: active ? 500 : 400,
-                  transition: "color 0.15s, background 0.15s",
-                }}>
-                  <span style={{ fontSize: "14px", opacity: active ? 1 : 0.7, width: "16px", textAlign: "center" }}>{icon}</span>
+                  background: active ? "#141414" : "transparent",
+                  color: active ? "#fff" : "#484848",
+                  textDecoration: "none", fontSize: "13px",
+                  fontWeight: active ? 500 : 400,
+                  transition: "color 0.12s, background 0.12s",
+                }}
+                  onMouseEnter={(e) => { if (!active) (e.currentTarget as HTMLAnchorElement).style.color = "#888"; }}
+                  onMouseLeave={(e) => { if (!active) (e.currentTarget as HTMLAnchorElement).style.color = "#484848"; }}
+                >
+                  <span style={{ fontSize: "13px", opacity: active ? 1 : 0.5, width: "16px", textAlign: "center", flexShrink: 0 }}>{icon}</span>
                   {label}
                 </Link>
               </li>
@@ -66,16 +75,17 @@ export function Sidebar() {
       </nav>
 
       {/* Logout */}
-      <div style={{ padding: "12px", borderTop: "1px solid #161616" }}>
+      <div style={{ padding: "8px 8px 20px", borderTop: "1px solid #141414" }}>
         <button onClick={handleLogout} style={{
           display: "flex", alignItems: "center", gap: "10px", width: "100%",
-          padding: "10px 12px", borderRadius: "8px", background: "transparent",
-          color: "#444", border: "none", cursor: "pointer", fontSize: "13px",
-          transition: "color 0.15s, background 0.15s",
+          padding: "10px 12px", borderRadius: "8px",
+          background: "transparent", color: "#383838",
+          border: "none", cursor: "pointer", fontSize: "13px",
+          transition: "color 0.12s, background 0.12s",
         }}
-          onMouseEnter={(e) => { const b = e.currentTarget; b.style.color = "#ef4444"; b.style.background = "#1a0a0a"; }}
-          onMouseLeave={(e) => { const b = e.currentTarget; b.style.color = "#444"; b.style.background = "transparent"; }}>
-          <span style={{ fontSize: "14px", width: "16px", textAlign: "center" }}>↩</span>
+          onMouseEnter={(e) => { const b = e.currentTarget as HTMLButtonElement; b.style.color = "#ef4444"; b.style.background = "#1a0808"; }}
+          onMouseLeave={(e) => { const b = e.currentTarget as HTMLButtonElement; b.style.color = "#383838"; b.style.background = "transparent"; }}>
+          <span style={{ fontSize: "13px", width: "16px", textAlign: "center", flexShrink: 0 }}>↩</span>
           Logout
         </button>
       </div>

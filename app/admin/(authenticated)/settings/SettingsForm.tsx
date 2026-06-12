@@ -77,7 +77,7 @@ export function SettingsForm({ initialData }: { initialData: SiteSettings | null
       </div>
 
       <button type="submit" disabled={isPending}
-        style={{ padding: "12px 28px", borderRadius: "10px", fontSize: "14px", fontWeight: 600, background: "#fff", color: "#000", border: "none", cursor: "pointer", opacity: isPending ? 0.7 : 1, alignSelf: "flex-start" }}>
+        style={{ padding: "10px 24px", borderRadius: "10px", fontSize: "13px", fontWeight: 600, background: "#fff", color: "#000", border: "none", cursor: "pointer", opacity: isPending ? 0.7 : 1, alignSelf: "flex-start" }}>
         {isPending ? "Saving…" : "Save Settings"}
       </button>
     </form>
