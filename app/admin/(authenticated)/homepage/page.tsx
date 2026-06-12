@@ -14,7 +14,7 @@ async function getCollections() {
 export default async function HomepagePage() {
   const collections = await getCollections();
   return (
-    <div style={{ padding: "48px 48px", maxWidth: "900px", margin: "0 auto" }}>
+    <div className="admin-page" style={{ maxWidth: "900px" }}>
       <PageHeader title="Homepage Builder" description="Toggle featured collections and drag to reorder them on the homepage." />
       <HomepageClient initialCollections={collections} />
     </div>

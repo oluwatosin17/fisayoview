@@ -29,7 +29,7 @@ async function getStats() {
 export default async function ContactsPage() {
   const [contacts, stats] = await Promise.all([getContacts(), getStats()]);
   return (
-    <div style={{ padding: "48px 48px", maxWidth: "1200px", margin: "0 auto" }}>
+    <div className="admin-page" style={{ maxWidth: "1200px" }}>
       <PageHeader title="Contacts" description="Lead management — website enquiries and manually added leads" />
       <ContactsClient initialContacts={contacts} stats={stats} />
     </div>

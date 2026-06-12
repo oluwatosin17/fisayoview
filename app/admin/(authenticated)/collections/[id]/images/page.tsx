@@ -18,7 +18,7 @@ export default async function ImagesPage({ params }: Props) {
   if (error || !collection) notFound();
 
   return (
-    <div style={{ padding: "48px 48px", maxWidth: "1300px", margin: "0 auto" }}>
+    <div className="admin-page" style={{ maxWidth: "1300px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "24px", fontSize: "13px" }}>
         <Link href="/admin/collections" style={{ color: "#484848", textDecoration: "none" }}>Collections</Link>
         <span style={{ color: "#242424" }}>/</span>

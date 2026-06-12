@@ -224,7 +224,7 @@ export function CollectionForm({ initialData, collectionId, mode }: CollectionFo
       </div>
 
       {/* Sort order + Featured in a row */}
-      <div style={{ display: "flex", gap: "24px", alignItems: "flex-end" }}>
+      <div className="admin-form-row" style={{ alignItems: "flex-end" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <label style={lbl}>Sort Order</label>
           <input type="number" value={displayOrder} onChange={(e) => setDisplayOrder(Number(e.target.value))}

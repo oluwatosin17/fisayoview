@@ -256,7 +256,7 @@ export default function ContactsClient({
       )}
 
       {/* Stats row */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px", marginBottom: "32px" }}>
+      <div className="admin-contacts-stats" style={{ marginBottom: "32px" }}>
         {[
           { label: "Total",     value: kpis.total,     color: "#fff"    },
           { label: "New",       value: kpis.new,       color: "#60a5fa" },
@@ -314,7 +314,57 @@ export default function ContactsClient({
         </button>
       </div>
 
-      {/* Table */}
+      {/* Mobile card stack */}
+      <div className="admin-contacts-cards">
+        {filtered.length === 0 ? (
+          <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "48px 24px", textAlign: "center" }}>
+            <p style={{ fontSize: "36px", color: "#1e1e1e", margin: "0 0 12px" }}>✉</p>
+            <p style={{ fontSize: "15px", fontWeight: 500, color: "#555", margin: "0 0 16px" }}>
+              {contacts.length === 0 ? "No leads yet" : "No results"}
+            </p>
+            {contacts.length === 0 && (
+              <button type="button" onClick={() => setShowAddModal(true)}
+                style={{ padding: "10px 20px", borderRadius: "10px", fontSize: "13px", fontWeight: 600, background: "#fff", color: "#000", border: "none", cursor: "pointer" }}>
+                + Add first lead
+              </button>
+            )}
+          </div>
+        ) : filtered.map((c) => {
+          const st = STATUS_STYLES[c.status] ?? STATUS_STYLES.NEW;
+          return (
+            <div key={c.id}
+              onClick={() => router.push(`/admin/contacts/${c.id}`)}
+              style={{
+                background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "12px",
+                padding: "16px", cursor: "pointer",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "8px", marginBottom: "10px" }}>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    <p style={{ fontSize: "15px", fontWeight: 600, color: "#fff", margin: 0 }}>{c.name}</p>
+                    {c.source === "manual" && (
+                      <span style={{ fontSize: "10px", fontWeight: 600, padding: "2px 5px", borderRadius: "4px", background: "#a78bfa18", color: "#a78bfa", flexShrink: 0 }}>MANUAL</span>
+                    )}
+                  </div>
+                  {c.event_type && <p style={{ fontSize: "12px", color: "#555", margin: "3px 0 0" }}>{c.event_type}</p>}
+                </div>
+                <span style={{ fontSize: "11px", fontWeight: 600, padding: "3px 9px", borderRadius: "6px", background: st.bg, color: st.color, border: `1px solid ${st.color}33`, flexShrink: 0 }}>
+                  {st.label}
+                </span>
+              </div>
+              <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+                {c.email && <span style={{ fontSize: "12px", color: "#555" }}>{c.email}</span>}
+                {c.phone && <span style={{ fontSize: "12px", color: "#555" }}>{c.phone}</span>}
+                <span style={{ fontSize: "12px", color: "#383838", marginLeft: "auto" }}>{formatDate(c.created_at)}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop table */}
+      <div className="admin-contacts-table">
       {filtered.length === 0 ? (
         <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "80px 24px", textAlign: "center" }}>
           <p style={{ fontSize: "40px", color: "#1e1e1e", margin: "0 0 16px" }}>✉</p>
@@ -396,6 +446,7 @@ export default function ContactsClient({
           })}
         </div>
       )}
+      </div>{/* end admin-contacts-table */}
     </div>
   );
 }

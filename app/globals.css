@@ -39,3 +39,93 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Admin responsive utilities ─────────────────────────────── */
+.admin-page {
+  padding: 48px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+@media (max-width: 1024px) {
+  .admin-page { padding: 32px 24px; }
+}
+@media (max-width: 640px) {
+  .admin-page { padding: 20px 16px; }
+}
+
+/* Admin stat grid: 4 cols → 2 cols → 1 col */
+.admin-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+@media (max-width: 900px) {
+  .admin-stat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .admin-stat-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+}
+
+/* Admin two-column layout (category + recent) */
+.admin-two-col {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+}
+@media (max-width: 900px) {
+  .admin-two-col { grid-template-columns: 1fr; }
+}
+
+/* Admin form two-column row */
+.admin-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 640px) {
+  .admin-form-row { grid-template-columns: 1fr; }
+}
+
+/* Contacts 5-stat grid */
+.admin-contacts-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+@media (max-width: 900px) {
+  .admin-contacts-stats { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 500px) {
+  .admin-contacts-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Contacts table → hidden on mobile, card stack shown instead */
+.admin-contacts-table { display: block; }
+.admin-contacts-cards { display: none; }
+@media (max-width: 768px) {
+  .admin-contacts-table { display: none; }
+  .admin-contacts-cards { display: flex; flex-direction: column; gap: 8px; }
+}
+
+/* Homepage builder featured grid */
+.admin-featured-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+@media (max-width: 768px) {
+  .admin-featured-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 480px) {
+  .admin-featured-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Contact / lead detail 2-col layout */
+.admin-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+}
+@media (max-width: 768px) {
+  .admin-detail-grid { grid-template-columns: 1fr; }
+}

@@ -11,7 +11,7 @@ async function getSiteSettings() {
 export default async function AboutPage() {
   const settings = await getSiteSettings();
   return (
-    <div style={{ padding: "48px 48px", maxWidth: "800px", margin: "0 auto" }}>
+    <div className="admin-page" style={{ maxWidth: "800px" }}>
       <PageHeader title="About" description="Edit your biography, portrait gallery, and contact details" />
       <AboutForm initialData={settings} />
     </div>

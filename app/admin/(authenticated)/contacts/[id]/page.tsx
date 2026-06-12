@@ -120,7 +120,7 @@ export default function ContactDetailPage() {
 
   if (!contact) {
     return (
-      <div style={{ padding: "48px 48px" }}>
+      <div className="admin-page">
         <div style={{ fontSize: "14px", color: "#444" }}>Loading…</div>
       </div>
     );
@@ -133,7 +133,7 @@ export default function ContactDetailPage() {
   const mailBody = encodeURIComponent(`Hi ${contact.name},\n\nThank you for your enquiry.\n\n---\nOriginal message:\n${contact.message}`);
 
   return (
-    <div style={{ padding: "48px 48px", maxWidth: "900px", margin: "0 auto" }}>
+    <div className="admin-page" style={{ maxWidth: "900px" }}>
       {/* Breadcrumb */}
       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "24px", fontSize: "13px" }}>
         <Link href="/admin/contacts" style={{ color: "#555", textDecoration: "none" }}>Contacts</Link>
@@ -179,7 +179,8 @@ export default function ContactDetailPage() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: "20px" }}>
+      <div className="admin-detail-grid">
+
         {/* Left column */}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
 

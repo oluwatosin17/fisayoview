@@ -21,7 +21,7 @@ async function getCollections(): Promise<CollectionWithCount[]> {
 export default async function CollectionsPage() {
   const collections = await getCollections();
   return (
-    <div style={{ padding: "48px 48px", maxWidth: "1400px", margin: "0 auto" }}>
+    <div className="admin-page" style={{ maxWidth: "1400px" }}>
       <PageHeader
         title="Collections"
         description={`${collections.length} collection${collections.length !== 1 ? "s" : ""}`}

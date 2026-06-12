@@ -65,7 +65,7 @@ export default async function DashboardPage() {
   const maxCat = Math.max(...Object.values(stats.catBreakdown), 1);
 
   return (
-    <div style={{ padding: "48px 48px", maxWidth: "1200px", margin: "0 auto" }}>
+    <div className="admin-page" style={{ maxWidth: "1200px" }}>
 
       {/* Page header */}
       <div style={{ marginBottom: "40px" }}>
@@ -74,7 +74,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stat cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "20px", marginBottom: "32px" }}>
+      <div className="admin-stat-grid" style={{ marginBottom: "32px" }}>
         <StatCard label="Collections" value={stats.totalCollections} icon="◫" accent="#fff" />
         <StatCard label="Images" value={stats.totalImages} icon="⬡" accent="#a78bfa" />
         <StatCard label="Categories" value={stats.totalCats} icon="⊞" accent="#f59e0b" />
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Two-column main content */}
-      <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: "20px", marginBottom: "32px" }}>
+      <div className="admin-two-col" style={{ marginBottom: "32px" }}>
 
         {/* Categories breakdown */}
         <div style={{ background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: "16px", padding: "20px" }}>
@@ -148,7 +148,7 @@ export default async function DashboardPage() {
             <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#444", margin: 0 }}>Featured on Homepage</p>
             <Link href="/admin/homepage" style={{ fontSize: "12px", color: "#444", textDecoration: "none", padding: "6px 12px", border: "1px solid #1a1a1a", borderRadius: "8px" }}>Manage →</Link>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "12px" }}>
+          <div className="admin-featured-grid">
             {stats.featuredCollections.map((col) => (
               <Link key={col.id} href={`/admin/collections/${col.id}/images`} style={{ textDecoration: "none" }}>
                 <div style={{ borderRadius: "10px", overflow: "hidden", aspectRatio: "1", background: "#1a1a1a" }}>

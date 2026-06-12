@@ -19,7 +19,7 @@ export default async function EditCollectionPage({ params }: Props) {
   if (error || !collection) notFound();
 
   return (
-    <div style={{ padding: "48px 48px", maxWidth: "1100px", margin: "0 auto" }}>
+    <div className="admin-page" style={{ maxWidth: "1100px" }}>
       <div style={{ marginBottom: "40px" }}>
         <h1 style={{ fontSize: "28px", fontWeight: 600, color: "#fff", margin: 0, letterSpacing: "-0.02em", lineHeight: 1.2 }}>
           Edit Collection
