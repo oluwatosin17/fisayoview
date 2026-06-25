@@ -100,7 +100,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 
   verification: {
-    google: "5J2pJjyfn-2s1wMrk_hh4TqUG8fJNlj-zelGLcyw",
+    google: "5J2pJjyfn-2s1wMrk_hh4TqUG8fJNlj-zelGLcywXBU",
   },
 };
 
