@@ -3,5 +3,13 @@
   "env": {
     "NEXT_PUBLIC_SUPABASE_URL": "https://jiozqlwcaohekmxhksky.supabase.co",
     "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME": "oluwatosin17"
-  }
+  },
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "fisayoview.vercel.app" }],
+      "destination": "https://fisayoview.com/$1",
+      "permanent": true
+    }
+  ]
 }
