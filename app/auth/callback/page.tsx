@@ -2,7 +2,7 @@
 
 /**
  * Auth callback — handles the Supabase implicit-flow redirect:
- *   https://fisayoview.vercel.app/auth/callback
+ *   https://fisayoview.com/auth/callback
  *     #access_token=xxx&refresh_token=yyy&token_type=bearer&type=magiclink
  *
  * We manually extract the tokens from window.location.hash and call
