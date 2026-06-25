@@ -1,12 +1,21 @@
 "use client";
 
 /**
- * Auth callback — handles the Supabase implicit-flow redirect:
- *   https://fisayoview.com/auth/callback
- *     #access_token=xxx&refresh_token=yyy&token_type=bearer&type=magiclink
+ * Auth callback — handles ALL Supabase auth redirect types:
  *
- * We manually extract the tokens from window.location.hash and call
- * supabase.auth.setSession() directly — the most reliable approach.
+ * 1. Implicit flow (magic link default):
+ *    https://fisayoview.com/auth/callback
+ *      #access_token=xxx&refresh_token=yyy&token_type=bearer&type=magiclink
+ *
+ * 2. PKCE flow (future-proof):
+ *    https://fisayoview.com/auth/callback?code=xxx
+ *
+ * 3. Rescue: tokens land on any page (e.g. homepage) when Supabase Site URL
+ *    is misconfigured. NavigationRestorer forwards them here with the hash
+ *    intact so this handler can process them normally.
+ *
+ * On success → /admin/dashboard
+ * On failure → /admin/login?error=auth_callback_failed
  */
 
 import { useEffect, useState } from "react";
@@ -21,11 +30,23 @@ export default function AuthCallbackPage() {
     async function handle() {
       const supabase = createSupabaseBrowserClient();
 
-      // ── 1. Hash fragment (implicit flow — what Supabase email magic links use) ──
-      const hash = window.location.hash.slice(1);           // strip leading #
+      // ── 1. Hash fragment (implicit flow — what magic links produce) ──────────
+      const hash   = window.location.hash.slice(1); // strip leading #
       const params = new URLSearchParams(hash);
       const accessToken  = params.get("access_token");
       const refreshToken = params.get("refresh_token");
+      const errorCode    = params.get("error_code");
+      const errorDesc    = params.get("error_description");
+
+      // Surface any Supabase-level errors embedded in the fragment
+      if (errorCode) {
+        const msg = errorDesc
+          ? decodeURIComponent(errorDesc.replace(/\+/g, " "))
+          : "Link expired or already used — request a new one.";
+        setMessage(msg);
+        setTimeout(() => router.replace("/admin/login?error=auth_callback_failed"), 2500);
+        return;
+      }
 
       if (accessToken && refreshToken) {
         const { data, error } = await supabase.auth.setSession({
@@ -41,14 +62,14 @@ export default function AuthCallbackPage() {
         }
 
         if (data.session) {
-          // Clear the hash from the URL so the tokens aren't visible
+          // Clear the hash so tokens don't stay in the browser history
           window.history.replaceState(null, "", window.location.pathname);
           router.replace("/admin/dashboard");
           return;
         }
       }
 
-      // ── 2. Query param (PKCE flow — future-proof) ────────────────────────────
+      // ── 2. Query param (PKCE flow) ───────────────────────────────────────────
       const qp   = new URLSearchParams(window.location.search);
       const code = qp.get("code");
 
@@ -58,16 +79,17 @@ export default function AuthCallbackPage() {
           router.replace("/admin/dashboard");
           return;
         }
+        // If exchange fails, fall through to session check below
       }
 
-      // ── 3. Already have a session (page refresh / direct nav) ─────────────
+      // ── 3. Already have a valid session (page refresh / direct nav) ──────────
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         router.replace("/admin/dashboard");
         return;
       }
 
-      // Nothing worked
+      // ── Nothing worked ───────────────────────────────────────────────────────
       setMessage("Link expired or already used — request a new one.");
       setTimeout(() => router.replace("/admin/login?error=auth_callback_failed"), 2500);
     }
@@ -76,7 +98,7 @@ export default function AuthCallbackPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const isExpired = message.startsWith("Link expired");
+  const isExpired = message.startsWith("Link expired") || message.includes("expired");
 
   return (
     <div style={{

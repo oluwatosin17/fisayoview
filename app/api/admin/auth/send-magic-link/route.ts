@@ -2,6 +2,14 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { Resend } from "resend";
 
+// Use the canonical site URL so the redirectTo is always correct regardless
+// of how Vercel/Next.js sets request.url internally (can be an internal IP).
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??   // set this in Vercel env
+  process.env.NEXT_PUBLIC_SUPABASE_URL   // fallback: not ideal but better than nothing
+    ?.replace(/supabase\.co.*/, "")      // strip supabase domain just in case
+  ?? "https://fisayoview.com";           // hard fallback
+
 const ADMIN_EMAILS = ["bookfisayoview@gmail.com", "obalanatosin16@gmail.com"];
 
 export async function POST(request: Request) {
@@ -23,8 +31,9 @@ export async function POST(request: Request) {
   }
 
   const admin = supabaseAdmin();
-  const origin = new URL(request.url).origin;
-  const redirectTo = `${origin}/auth/callback`;
+  // Always use the canonical domain — never derive from request.url which
+  // can be an internal Vercel/Next.js hostname in serverless environments.
+  const redirectTo = `${SITE_URL}/auth/callback`;
 
   // ── Option A: Resend (best deliverability, arrives in inbox) ────────────────
   if (process.env.RESEND_API_KEY) {

@@ -1,22 +1,51 @@
 "use client";
 
 /**
- * Layout-level scroll + state restorer.
+ * Layout-level scroll + state restorer AND auth-token rescue.
  *
  * Runs on EVERY pathname change — this fires whether Next.js served the home
  * page from the router cache (no remount, no HomeClient useEffect) OR did a
  * fresh render. Placing it in the root layout ensures it is always mounted.
+ *
+ * Auth rescue: If Supabase magic-link redirects to the Site URL (homepage)
+ * instead of /auth/callback — which happens when /auth/callback is not yet
+ * in the Supabase Redirect URL allowlist — the tokens land in window.location.hash
+ * on the homepage. We detect them here and immediately forward to /auth/callback
+ * so the existing callback handler can finish the sign-in.
  */
 
 import { useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const SCROLL_KEY = "fisayoview_scrollY";
 
 export default function NavigationRestorer() {
-  const pathname = usePathname();
+  const pathname  = usePathname();
+  const router    = useRouter();
   const prevPathname = useRef<string | null>(null);
 
+  // ── Auth token rescue ──────────────────────────────────────────────────────
+  // Runs once on mount (client only). If Supabase drops auth tokens on any
+  // page that isn't /auth/callback, redirect to the callback page with the
+  // hash preserved so the callback handler can exchange them.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const hash   = window.location.hash.slice(1);
+    const params = new URLSearchParams(hash);
+    const type   = params.get("type");
+    const token  = params.get("access_token");
+
+    // Only act if this looks like a Supabase auth callback fragment
+    if ((type === "magiclink" || type === "recovery" || type === "signup" || token) &&
+        pathname !== "/auth/callback") {
+      // Preserve the full hash so /auth/callback can process the tokens
+      router.replace(`/auth/callback${window.location.hash}`);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // intentionally runs once on mount
+
+  // ── Scroll restoration ────────────────────────────────────────────────────
   useEffect(() => {
     const prev = prevPathname.current;
     prevPathname.current = pathname;
