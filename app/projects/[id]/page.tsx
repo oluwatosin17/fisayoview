@@ -18,6 +18,27 @@ const CATEGORY_LABELS: Record<string, string> = {
   STUDIO:     "Studio",
   ESSENCE:    "Portrait",
   LAW:        "Law Graduation",
+  FASHION:    "Fashion",
+  COMMERCIAL: "Commercial",
+  EVENT:      "Event",
+  PORTRAIT:   "Portrait",
+  FAMILY:     "Family",
+  MATERNITY:  "Maternity",
+};
+
+const CATEGORY_KEYWORDS: Record<string, string[]> = {
+  BIRTHDAY:   ["birthday photographer Lagos", "birthday photography Lagos", "birthday photoshoot Lagos"],
+  WEDDING:    ["wedding photographer Lagos", "luxury wedding photographer Lagos", "wedding photography Nigeria"],
+  GRADUATION: ["graduation photographer Lagos", "graduation photography Lagos", "graduation photoshoot Lagos"],
+  STUDIO:     ["studio photographer Lagos", "studio photography Lagos", "portrait photographer Lagos"],
+  ESSENCE:    ["portrait photographer Lagos", "personal branding photographer Lagos", "headshot photographer Lagos"],
+  LAW:        ["graduation photographer Lagos", "law graduation photographer Lagos"],
+  FASHION:    ["fashion photographer Lagos", "editorial photographer Lagos", "commercial photographer Lagos"],
+  COMMERCIAL: ["commercial photographer Lagos", "brand photographer Lagos", "product photographer Lagos"],
+  EVENT:      ["event photographer Lagos", "event photography Lagos", "corporate event photographer Lagos"],
+  PORTRAIT:   ["portrait photographer Lagos", "headshot photographer Lagos", "corporate headshot Lagos"],
+  FAMILY:     ["family photographer Lagos", "maternity photographer Lagos"],
+  MATERNITY:  ["maternity photographer Lagos", "family photographer Lagos"],
 };
 
 function buildDescription(name: string, category: string, description?: string | null) {
@@ -48,7 +69,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       `${catLabel} photographer Lagos`,
       `${catLabel} photography Lagos`,
       `${catLabel} photographer Nigeria`,
-      "FISAYOVIEW", "Fisayo Obalana", "photographer Lagos",
+      ...(CATEGORY_KEYWORDS[category] ?? []),
+      "FISAYOVIEW", "Fisayo Obalana", "Fisayo View", "photographer Lagos",
+      "top photographer Lagos", "best photographer Lagos",
     ],
     openGraph: {
       title: `${title} | FISAYOVIEW`,

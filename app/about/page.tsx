@@ -8,12 +8,16 @@ import { BASE_URL } from "@/app/layout";
 const OG_IMAGE = "https://res.cloudinary.com/oluwatosin17/image/upload/f_auto,q_auto,w_1200/fisayoview/about/IMG_9296";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About Fisayo Obalana",
   description:
-    "Meet Fisayo Obalana — the photographer behind FISAYOVIEW. A Lagos-based professional photographer specialising in birthdays, weddings, graduations, studio portraits, and editorial photography across Nigeria.",
+    "Meet Fisayo Obalana — the photographer behind FISAYOVIEW. A top Lagos-based professional photographer specialising in weddings, events, portraits, fashion, commercial, birthday, graduation and editorial photography across Lagos, Nigeria.",
   keywords: [
-    "about FISAYOVIEW", "Fisayo Obalana photographer", "Lagos photographer about",
-    "Nigerian photographer biography", "professional photographer Lagos",
+    "about FISAYOVIEW", "Fisayo Obalana photographer", "Fisayo View photographer",
+    "Lagos photographer biography", "Nigerian photographer biography",
+    "professional photographer Lagos", "top photographer Lagos",
+    "wedding photographer Lagos", "event photographer Lagos",
+    "portrait photographer Lagos", "fashion photographer Lagos",
+    "commercial photographer Lagos", "editorial photographer Lagos",
   ],
   openGraph: {
     title: "About Fisayo Obalana — FISAYOVIEW",
@@ -68,13 +72,15 @@ const structuredData = {
           addressCountry: "NG",
         },
         knowsAbout: [
-          "Portrait Photography",
-          "Birthday Photography",
-          "Wedding Photography",
-          "Graduation Photography",
-          "Studio Photography",
-          "Editorial Photography",
-          "Event Photography",
+          "Portrait Photography", "Birthday Photography", "Wedding Photography",
+          "Pre-wedding Photography", "Engagement Photography",
+          "Traditional Wedding Photography", "Graduation Photography",
+          "Studio Photography", "Editorial Photography", "Event Photography",
+          "Fashion Photography", "Commercial Photography", "Product Photography",
+          "Brand Photography", "Headshot Photography", "Corporate Photography",
+          "Personal Branding Photography", "Family Photography",
+          "Maternity Photography", "Concert Photography", "Red Carpet Photography",
+          "Lifestyle Photography",
         ],
       },
     },
