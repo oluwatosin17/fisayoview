@@ -100,10 +100,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 
   verification: {
-    // Add Google Search Console HTML tag verification token here once confirmed:
-    // google: "YOUR_TOKEN_HERE",
-    // Add Bing Webmaster Tools token here:
-    // other: { "msvalidate.01": "YOUR_BING_TOKEN" },
+    google: "5J2pJjyfn-2s1wMrk_hh4TqUG8fJNlj-zelGLcyw",
   },
 };
 
