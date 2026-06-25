@@ -12,5 +12,11 @@ export default async function Home() {
     if (c.coverUrl) coverImages[c.id] = c.coverUrl;
   }
 
-  return <HomeClient coverImages={coverImages} collections={collections} />;
+  return (
+    <>
+      {/* Visually hidden h1 for SEO — the visual logo/brand serves as the heading */}
+      <h1 className="sr-only">FISAYOVIEW — Photographer in Lagos, Nigeria</h1>
+      <HomeClient coverImages={coverImages} collections={collections} />
+    </>
+  );
 }

@@ -203,7 +203,7 @@ export default function Navbar({ activeCategory, onCategoryChange, allMuted = fa
             <Link href="/" {...hoverProps("logo")} style={{ ...baseTextStyle, fontSize: "12px", position: "absolute", left: "60px", top: "50%", transform: "translateY(-50%)", color: "#fff", opacity: itemOpacity("logo"), transition: "opacity 0.2s ease", display: "flex", alignItems: "center", gap: "6px" }}>
               <span style={{ width: "14px", height: "14px", background: "#fff", borderRadius: "0.84px", flexShrink: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logo-black.png" alt="FV" style={{ width: "10px", height: "10px", objectFit: "contain", display: "block" }} />
+                <img src="/logo-black.png" alt="FISAYOVIEW logo" style={{ width: "10px", height: "10px", objectFit: "contain", display: "block" }} />
               </span>
               FISAYOVIEW
             </Link>
@@ -232,7 +232,7 @@ export default function Navbar({ activeCategory, onCategoryChange, allMuted = fa
               <Link href="/" style={{ ...baseTextStyle, fontSize: "11px", color: "#fff", display: "flex", alignItems: "center", gap: "6px" }}>
                 <span style={{ width: "14px", height: "14px", background: "#fff", borderRadius: "0.84px", flexShrink: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/logo-black.png" alt="FV" style={{ width: "10px", height: "10px", objectFit: "contain", display: "block" }} />
+                  <img src="/logo-black.png" alt="FISAYOVIEW logo" style={{ width: "10px", height: "10px", objectFit: "contain", display: "block" }} />
                 </span>
                 FISAYOVIEW
               </Link>

@@ -73,7 +73,7 @@ export default function AboutPageClient({ heading, bio, portraits, whatsapp, ema
               style={{ position: "relative", width: "40px", height: "40px", padding: 0, border: "none", background: "none", cursor: "pointer", borderRadius: "1.6px", overflow: "hidden", flexShrink: 0 }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderRadius: "1.6px" }} />
+              <img src={img.url} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderRadius: "1.6px" }} />
               <motion.div
                 animate={{ opacity: isActive ? 0 : 1 }}
                 transition={{ duration: 0.2 }}
@@ -130,7 +130,7 @@ export default function AboutPageClient({ heading, bio, portraits, whatsapp, ema
           <div style={{ position: "relative", width: "100%", height: "420px", overflow: "hidden" }}>
             <AnimatePresence custom={dir} mode="wait">
               <motion.img key={swipeIndex} custom={dir} variants={slideVariants} initial="enter" animate="center" exit="exit"
-                transition={{ duration: 0.3, ease: EASE_OUT }} src={portrait.url} alt="Fisayo" draggable={false}
+                transition={{ duration: 0.3, ease: EASE_OUT }} src={portrait.url} alt="Fisayo Obalana — photographer behind FISAYOVIEW, Lagos Nigeria" draggable={false}
                 drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.12}
                 onDragEnd={(_, info) => { if (info.offset.x < -50) navigate(activeIndex + 1); else if (info.offset.x > 50) navigate(activeIndex - 1); }}
                 style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", touchAction: "pan-y", userSelect: "none" }} />
@@ -149,7 +149,7 @@ export default function AboutPageClient({ heading, bio, portraits, whatsapp, ema
           <div style={{ flex: "0 0 320px", height: "520px", position: "relative", overflow: "hidden", borderRadius: "2px", cursor: images.length > 1 ? "grab" : "default" }}>
             <AnimatePresence custom={dir} mode="wait">
               <motion.img key={swipeIndex} custom={dir} variants={slideVariants} initial="enter" animate="center" exit="exit"
-                transition={{ duration: 0.3, ease: EASE_OUT }} src={portrait.url} alt="Fisayo" draggable={false}
+                transition={{ duration: 0.3, ease: EASE_OUT }} src={portrait.url} alt="Fisayo Obalana — photographer behind FISAYOVIEW, Lagos Nigeria" draggable={false}
                 drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.12}
                 onDragEnd={(_, info) => { if (info.offset.x < -50) navigate(activeIndex + 1); else if (info.offset.x > 50) navigate(activeIndex - 1); }}
                 whileDrag={{ cursor: "grabbing" }}
@@ -170,7 +170,7 @@ export default function AboutPageClient({ heading, bio, portraits, whatsapp, ema
             <div style={{ width: "516px", height: "700px", flexShrink: 0, position: "relative", overflow: "hidden", cursor: images.length > 1 ? "grab" : "default" }}>
               <AnimatePresence custom={dir} mode="wait">
                 <motion.img key={swipeIndex} custom={dir} variants={slideVariants} initial="enter" animate="center" exit="exit"
-                  transition={{ duration: 0.3, ease: EASE_OUT }} src={portrait.url} alt="Fisayo" draggable={false}
+                  transition={{ duration: 0.3, ease: EASE_OUT }} src={portrait.url} alt="Fisayo Obalana — photographer behind FISAYOVIEW, Lagos Nigeria" draggable={false}
                   drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.12}
                   onDragEnd={(_, info) => { if (info.offset.x < -50) navigate(activeIndex + 1); else if (info.offset.x > 50) navigate(activeIndex - 1); }}
                   whileDrag={{ cursor: "grabbing" }}

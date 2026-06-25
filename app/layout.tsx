@@ -9,7 +9,7 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-export const BASE_URL = "https://fisayoview.vercel.app";
+export const BASE_URL = "https://fisayoview.com";
 const OG_IMAGE = "https://res.cloudinary.com/oluwatosin17/image/upload/f_auto,q_auto,w_1200/fisayoview/seyi/IMG_9296";
 
 export const metadata: Metadata = {
@@ -97,8 +97,13 @@ export const metadata: Metadata = {
     shortcut: "/favicon.png",
   },
 
+  manifest: "/manifest.json",
+
   verification: {
-    google: undefined, // add Google Search Console verification token here when available
+    // Add Google Search Console HTML tag verification token here once confirmed:
+    // google: "YOUR_TOKEN_HERE",
+    // Add Bing Webmaster Tools token here:
+    // other: { "msvalidate.01": "YOUR_BING_TOKEN" },
   },
 };
 
@@ -238,7 +243,7 @@ const structuredData = {
           name: "Is FISAYOVIEW the best photographer in Lagos?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "FISAYOVIEW — Fisayo Obalana — is widely regarded as one of Lagos's leading portrait and event photographers, known for a signature style that combines natural light, rich tones, and authentic storytelling. Browse the portfolio at fisayoview.vercel.app to see the work.",
+            text: "FISAYOVIEW — Fisayo Obalana — is widely regarded as one of Lagos's leading portrait and event photographers, known for a signature style that combines natural light, rich tones, and authentic storytelling. Browse the portfolio at fisayoview.com to see the work.",
           },
         },
       ],
@@ -252,7 +257,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} antialiased`}>
+    <html lang="en-NG" className={`${geistSans.variable} antialiased`}>
       <head>
         {/* Extra favicon/PWA links not covered by Next.js metadata */}
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
