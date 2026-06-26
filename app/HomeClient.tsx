@@ -33,6 +33,14 @@ export default function HomeClient({ coverImages, collections }: Props) {
     if (savedCat) setActiveCategory(savedCat);
     if (savedCount) setVisibleCount(Math.max(PAGE_SIZE, parseInt(savedCount, 10)));
   }, []); // runs once on mount, client-only
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { ALL: collections.length };
+    for (const c of collections) {
+      counts[c.category] = (counts[c.category] ?? 0) + 1;
+    }
+    return counts;
+  }, [collections]);
+
   const filtered = useMemo(() => {
     if (activeCategory === "ALL") return collections;
     return collections.filter((c) => c.category === (activeCategory as string));
@@ -68,6 +76,7 @@ export default function HomeClient({ coverImages, collections }: Props) {
       <Navbar
         activeCategory={activeCategory}
         onCategoryChange={handleCategoryChange}
+        categoryCounts={categoryCounts}
       />
       <GalleryGrid
         collections={visible}

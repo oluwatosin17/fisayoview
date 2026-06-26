@@ -11,6 +11,7 @@ interface NavbarProps {
   activeCategory: Category;
   onCategoryChange: (cat: Category) => void;
   allMuted?: boolean;
+  categoryCounts?: Record<string, number>;
 }
 
 interface FormState {
@@ -41,7 +42,7 @@ function validateForm(form: FormState): FormErrors {
   return errors;
 }
 
-export default function Navbar({ activeCategory, onCategoryChange, allMuted = false }: NavbarProps) {
+export default function Navbar({ activeCategory, onCategoryChange, allMuted = false, categoryCounts }: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const bp = useBreakpoint();
@@ -211,10 +212,11 @@ export default function Navbar({ activeCategory, onCategoryChange, allMuted = fa
               {categories.map((cat) => {
                 const isActive = !allMuted && activeCategory === cat.value;
                 const id = `cat-${cat.value}`;
+                const count = categoryCounts ? (categoryCounts[cat.value] ?? 0) : cat.count;
                 return (
                   <button key={cat.value} onClick={() => handleCatClick(cat.value)} {...hoverProps(id)}
                     style={{ ...baseTextStyle, fontSize: "12px", color: isActive ? "#fff" : "#808080", opacity: itemOpacity(id), transition: "opacity 0.2s ease, color 0.15s ease" }}>
-                    {cat.label} ({cat.count})
+                    {cat.label} ({count})
                   </button>
                 );
               })}
@@ -245,10 +247,11 @@ export default function Navbar({ activeCategory, onCategoryChange, allMuted = fa
             <div style={{ position: "absolute", top: "64px", left: 0, right: 0, display: "flex", alignItems: "center", paddingLeft: "16px", gap: "22px", overflowX: "auto", scrollbarWidth: "none" }}>
               {categories.map((cat) => {
                 const isActive = !allMuted && activeCategory === cat.value;
+                const count = categoryCounts ? (categoryCounts[cat.value] ?? 0) : cat.count;
                 return (
                   <button key={cat.value} onClick={() => handleCatClick(cat.value)}
                     style={{ ...baseTextStyle, fontSize: "11px", color: isActive ? "#fff" : "#808080", flexShrink: 0, transition: "color 0.15s ease" }}>
-                    {cat.label} ({cat.count})
+                    {cat.label} ({count})
                   </button>
                 );
               })}
